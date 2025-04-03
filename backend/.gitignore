@@ -1,0 +1,16 @@
+# Node.js
+node_modules/
+npm-debug.log
+package-lock.json
+
+# Ambiente
+.env
+
+# Logs
+logs/
+*.log
+
+# Editor/IDE
+.vscode/
+.idea/
+.DS_Store

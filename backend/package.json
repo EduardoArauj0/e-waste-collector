@@ -18,7 +18,8 @@
     "express": "^5.1.0",
     "mysql2": "^3.14.0",
     "nodemon": "^3.1.9",
-    "sequelize": "^6.37.7"
+    "sequelize": "^6.37.7",
+    "yup": "^1.6.1"
   },
   "devDependencies": {
     "cross-env": "^7.0.3",

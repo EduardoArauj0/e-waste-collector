@@ -1,9 +1,13 @@
 const bcrypt = require('bcrypt');
 const { User } = require('../models');
+const { registerSchema, loginSchema } = require('../validations/userValidation');
 
 module.exports = {
   async register(req, res) {
     try {
+      // Validação com Yup
+      await registerSchema.validate(req.body, { abortEarly: false });
+
       const {
         name,
         email,
@@ -17,10 +21,12 @@ module.exports = {
         state
       } = req.body;
 
+      const hashedPassword = await bcrypt.hash(password, 10);
+
       const user = await User.create({
         name,
         email,
-        password,
+        password: hashedPassword,
         role,
         cep,
         street,
@@ -35,6 +41,10 @@ module.exports = {
 
       return res.status(201).json(userData);
     } catch (err) {
+      if (err.name === 'ValidationError') {
+        return res.status(400).json({ error: 'Erro de validação', messages: err.errors });
+      }
+
       return res.status(400).json({
         error: 'Erro ao cadastrar usuário',
         details: err
@@ -43,9 +53,11 @@ module.exports = {
   },
 
   async login(req, res) {
-    const { email, password } = req.body;
-
     try {
+      // Validação com Yup
+      await loginSchema.validate(req.body, { abortEarly: false });
+
+      const { email, password } = req.body;
       const user = await User.findOne({ where: { email } });
 
       if (!user) {
@@ -66,6 +78,10 @@ module.exports = {
         user: userData
       });
     } catch (err) {
+      if (err.name === 'ValidationError') {
+        return res.status(400).json({ error: 'Erro de validação', messages: err.errors });
+      }
+
       return res.status(500).json({ error: 'Erro ao fazer login' });
     }
   },
@@ -73,7 +89,7 @@ module.exports = {
   async index(req, res) {
     try {
       const users = await User.findAll({
-        attributes: { exclude: ['password'] } 
+        attributes: { exclude: ['password'] }
       });
 
       return res.json(users);

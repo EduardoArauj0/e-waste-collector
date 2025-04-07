@@ -1,9 +1,12 @@
 const { DiscardRequest } = require('../models');
+const discardRequestSchema = require('../validators/discardRequestValidator');
 
 module.exports = {
-  // Criar novo pedido de descarte
+  // Criar novo pedido de descarte com validação
   async create(req, res) {
     try {
+      await discardRequestSchema.validate(req.body, { abortEarly: false });
+
       const { type, description, userId } = req.body;
 
       const discard = await DiscardRequest.create({
@@ -15,7 +18,17 @@ module.exports = {
 
       return res.status(201).json(discard);
     } catch (err) {
-      return res.status(400).json({ error: 'Erro ao criar pedido de descarte', details: err });
+      if (err.name === 'ValidationError') {
+        return res.status(400).json({
+          error: 'Erro de validação',
+          messages: err.errors
+        });
+      }
+
+      return res.status(400).json({
+        error: 'Erro ao criar pedido de descarte',
+        details: err
+      });
     }
   },
 

@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import axios from 'axios';
 import * as yup from 'yup';
@@ -8,6 +9,7 @@ const loginSchema = yup.object().shape({
 });
 
 export default function Login() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [errors, setErrors] = useState({});
   const [response, setResponse] = useState(null);
@@ -23,7 +25,26 @@ export default function Login() {
       await loginSchema.validate(formData, { abortEarly: false });
 
       const res = await axios.post('http://localhost:3000/login', formData);
-      setResponse({ type: 'success', message: res.data.message });
+      const { user, message } = res.data;
+
+      localStorage.setItem('user', JSON.stringify(user));
+
+      switch (user.role) {
+        case 'cliente':
+          navigate('/dashboard/cliente');
+          break;
+        case 'empresa':
+          navigate('/dashboard/empresa');
+          break;
+        case 'admin':
+          navigate('/dashboard/admin');
+          break;
+        default:
+          navigate('/dashboard');
+      }
+
+      setResponse({ type: 'success', message });
+
     } catch (err) {
       if (err.name === 'ValidationError') {
         const validationErrors = {};
@@ -32,7 +53,10 @@ export default function Login() {
         });
         setErrors(validationErrors);
       } else {
-        setResponse({ type: 'error', message: err.response?.data?.error || 'Erro ao fazer login' });
+        setResponse({
+          type: 'error',
+          message: err.response?.data?.error || 'Erro ao fazer login',
+        });
       }
     }
   };

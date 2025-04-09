@@ -5,6 +5,7 @@ import DashboardPage from './pages/DashboardPage';
 import DashboardCliente from './components/DashboardCliente';
 import DashboardEmpresa from './components/DashboardEmpresa';
 import DashboardAdmin from './components/DashboardAdmin';
+import PrivateRoute from './components/PrivateRoute';
 
 export default function AppRoutes() {
   return (
@@ -12,10 +13,40 @@ export default function AppRoutes() {
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/cadastro" element={<RegisterPage />} />
-        <Route path="/dashboard" element={<DashboardPage />} />
-        <Route path="/dashboard/cliente" element={<DashboardCliente />} />
-        <Route path="/dashboard/empresa" element={<DashboardEmpresa />} />
-        <Route path="/dashboard/admin" element={<DashboardAdmin />} />
+
+        {/* Rotas protegidas */}
+        <Route
+          path="/dashboard"
+          element={
+            <PrivateRoute>
+              <DashboardPage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/dashboard/cliente"
+          element={
+            <PrivateRoute>
+              <DashboardCliente />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/dashboard/empresa"
+          element={
+            <PrivateRoute>
+              <DashboardEmpresa />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/dashboard/admin"
+          element={
+            <PrivateRoute>
+              <DashboardAdmin />
+            </PrivateRoute>
+          }
+        />
       </Routes>
     </BrowserRouter>
   );

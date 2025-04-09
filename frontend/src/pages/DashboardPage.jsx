@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import DashboardCliente from '../components/DashboardCliente';
@@ -7,17 +7,23 @@ import DashboardAdmin from '../components/DashboardAdmin';
 
 export default function DashboardPage() {
   const navigate = useNavigate();
-
-  // Pegamos o usuário do localStorage (ou sessionStorage, se preferir)
-  const user = JSON.parse(localStorage.getItem('user'));
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
-    if (!user) {
+    try {
+      const storedUser = JSON.parse(localStorage.getItem('user'));
+      if (!storedUser) {
+        navigate('/');
+      } else {
+        setUser(storedUser);
+      }
+    } catch (error) {
+      console.error('Erro ao ler user do localStorage:', error);
       navigate('/');
     }
-  }, [user, navigate]);
+  }, [navigate]);
 
-  if (!user) return null;
+  if (!user) return <p className="text-center mt-10">Carregando dashboard...</p>;
 
   switch (user.tipo) {
     case 'cliente':
@@ -27,6 +33,6 @@ export default function DashboardPage() {
     case 'admin':
       return <DashboardAdmin />;
     default:
-      return <div>Tipo de usuário inválido</div>;
+      return <p className="text-center mt-10 text-red-600">Tipo de usuário inválido.</p>;
   }
 }

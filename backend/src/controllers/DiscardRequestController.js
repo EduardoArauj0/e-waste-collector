@@ -1,8 +1,7 @@
 const { DiscardRequest } = require('../models');
-const discardRequestSchema = require('../validators/discardRequestValidator');
+const discardRequestSchema = require('../validations/discardRequestValidator');
 
 module.exports = {
-  // Criar novo pedido de descarte com validação
   async create(req, res) {
     try {
       await discardRequestSchema.validate(req.body, { abortEarly: false });
@@ -32,7 +31,6 @@ module.exports = {
     }
   },
 
-  // Listar todos os pedidos
   async index(req, res) {
     try {
       const requests = await DiscardRequest.findAll();
@@ -42,7 +40,6 @@ module.exports = {
     }
   },
 
-  // Atualizar status (usado pela empresa)
   async update(req, res) {
     try {
       const { id } = req.params;
@@ -62,7 +59,6 @@ module.exports = {
     }
   },
 
-  // Deletar pedido
   async delete(req, res) {
     try {
       const { id } = req.params;
@@ -76,4 +72,22 @@ module.exports = {
       return res.status(500).json({ error: 'Erro ao deletar pedido' });
     }
   },
+
+  async findByClienteId(req, res) {
+    try {
+      const { id } = req.params;
+  
+      const pedidos = await DiscardRequest.findAll({
+        where: { userId: id }
+      });
+  
+      if (pedidos.length === 0) {
+        return res.status(200).json({ message: 'Nenhum pedido encontrado.' });
+      }
+  
+      res.json(pedidos);
+    } catch (error) {
+      res.status(500).json({ error: 'Erro ao buscar pedidos do cliente' });
+    }
+  }  
 };

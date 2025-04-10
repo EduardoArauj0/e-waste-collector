@@ -40,7 +40,7 @@ module.exports = {
       const user = await User.create({
         name,
         email,
-        password: hashedPassword,
+        password,
         role,
         cep,
         street,
@@ -70,7 +70,9 @@ module.exports = {
     try {
       await loginSchema.validate(req.body, { abortEarly: false });
 
-      const { email, password } = req.body;
+      const email = req.body.email.trim();
+      const password = req.body.password;
+      
       const user = await User.findOne({ where: { email } });
 
       if (!user) {

@@ -1,3 +1,4 @@
+const axios = require('axios');
 const bcrypt = require('bcrypt');
 const { User } = require('../models');
 const { registerSchema, loginSchema } = require('../validations/userValidation');
@@ -5,7 +6,21 @@ const { registerSchema, loginSchema } = require('../validations/userValidation')
 module.exports = {
   async register(req, res) {
     try {
-      // Validação com Yup
+      const { cep } = req.body;
+
+      const viaCepRes = await axios.get(`https://viacep.com.br/ws/${cep}/json/`);
+
+      if (viaCepRes.data.erro) {
+        return res.status(400).json({ error: 'CEP inválido' });
+      }
+
+      const { logradouro, bairro, localidade, uf } = viaCepRes.data;
+
+      req.body.street = req.body.street || logradouro;
+      req.body.neighborhood = req.body.neighborhood || bairro;
+      req.body.city = req.body.city || localidade;
+      req.body.state = req.body.state || uf;
+
       await registerSchema.validate(req.body, { abortEarly: false });
 
       const {
@@ -13,7 +28,6 @@ module.exports = {
         email,
         password,
         role,
-        cep,
         street,
         number,
         neighborhood,
@@ -45,16 +59,15 @@ module.exports = {
         return res.status(400).json({ error: 'Erro de validação', messages: err.errors });
       }
 
-      return res.status(400).json({
+      return res.status(500).json({
         error: 'Erro ao cadastrar usuário',
-        details: err
+        details: err.message
       });
     }
   },
 
   async login(req, res) {
     try {
-      // Validação com Yup
       await loginSchema.validate(req.body, { abortEarly: false });
 
       const { email, password } = req.body;

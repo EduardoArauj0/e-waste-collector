@@ -1,9 +1,11 @@
+import LogoutButton from './LogoutButton';
+
 export default function DashboardEmpresa() {
-    return (
-      <div className="p-6">
-        <h1 className="text-2xl font-bold">Bem-vindo, Empresa!</h1>
-        <p>Você poderá visualizar e aceitar pedidos de descarte disponíveis.</p>
-      </div>
-    );
-  }
+  return (
+    <div className="p-6">
+      <h2 className="text-2xl font-bold mb-4">Dashboard Cliente</h2>
+      <LogoutButton />
+    </div>
+  );
+}
   

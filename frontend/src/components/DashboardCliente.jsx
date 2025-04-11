@@ -6,14 +6,18 @@ export default function DashboardCliente() {
   const [coletas, setColetas] = useState([]);
   const [formData, setFormData] = useState({ type: '', description: '' });
   const [response, setResponse] = useState(null);
+  const [loading, setLoading] = useState(true);
   const user = JSON.parse(localStorage.getItem('user'));
 
   const fetchColetas = async () => {
+    setLoading(true);
     try {
       const res = await axios.get(`http://localhost:3000/cliente/${user.id}/coletas`);
       setColetas(res.data);
     } catch (error) {
       console.error('Erro ao buscar coletas:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -34,10 +38,23 @@ export default function DashboardCliente() {
       });
       setResponse({ type: 'success', message: 'Pedido criado com sucesso!' });
       setFormData({ type: '', description: '' });
-      fetchColetas(); // agora a função está disponível aqui
+      fetchColetas();
     } catch (err) {
       console.error('Erro ao criar pedido:', err);
       setResponse({ type: 'error', message: 'Erro ao criar pedido' });
+    }
+  };
+
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'pendente':
+        return 'text-yellow-600';
+      case 'aceito':
+        return 'text-green-600';
+      case 'recusado':
+        return 'text-red-600';
+      default:
+        return 'text-gray-600';
     }
   };
 
@@ -49,14 +66,14 @@ export default function DashboardCliente() {
       </div>
 
       <h3 className="text-lg font-semibold mb-2">Novo Pedido de Coleta:</h3>
-      <form onSubmit={handleSubmit} className="mb-6">
+      <form onSubmit={handleSubmit} className="mb-6 flex flex-wrap gap-2">
         <input
           type="text"
           name="type"
           placeholder="Tipo de resíduo"
           value={formData.type}
           onChange={handleChange}
-          className="border p-2 rounded mr-2"
+          className="border p-2 rounded flex-1 min-w-[150px]"
           required
         />
         <input
@@ -65,7 +82,7 @@ export default function DashboardCliente() {
           placeholder="Descrição"
           value={formData.description}
           onChange={handleChange}
-          className="border p-2 rounded mr-2"
+          className="border p-2 rounded flex-1 min-w-[150px]"
           required
         />
         <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded">
@@ -79,17 +96,35 @@ export default function DashboardCliente() {
         </p>
       )}
 
-      <h3 className="text-lg font-semibold mb-2">Minhas Coletas:</h3>
-      {coletas.length === 0 ? (
+      <div className="flex justify-between items-center mb-2">
+        <h3 className="text-lg font-semibold">Minhas Coletas:</h3>
+        <button
+          onClick={fetchColetas}
+          className="text-sm text-blue-600 underline"
+        >
+          Atualizar
+        </button>
+      </div>
+
+      {loading ? (
+        <p>Carregando coletas...</p>
+      ) : coletas.length === 0 ? (
         <p>Nenhuma coleta encontrada.</p>
       ) : (
-        <ul className="list-disc ml-6">
+        <div className="grid gap-4">
           {coletas.map((coleta) => (
-            <li key={coleta.id}>
-              {coleta.type} - {coleta.description} ({coleta.status})
-            </li>
+            <div
+              key={coleta.id}
+              className="border rounded-xl shadow-sm p-4 bg-white"
+            >
+              <p className="font-semibold">Tipo: {coleta.type}</p>
+              <p>Descrição: {coleta.description}</p>
+              <p className={`mt-1 font-medium ${getStatusColor(coleta.status)}`}>
+                Status: {coleta.status}
+              </p>
+            </div>
           ))}
-        </ul>
+        </div>
       )}
     </div>
   );

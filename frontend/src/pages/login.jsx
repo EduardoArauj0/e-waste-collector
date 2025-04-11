@@ -24,7 +24,7 @@ export default function Login() {
     try {
       await loginSchema.validate(formData, { abortEarly: false });
 
-      const res = await axios.post('http://localhost:3000/login', formData);
+      const res = await axios.post('http://localhost:3000/users/login', formData);
       const { user, message } = res.data;
 
       localStorage.setItem('user', JSON.stringify(user));

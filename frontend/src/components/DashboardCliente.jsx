@@ -12,7 +12,7 @@ export default function DashboardCliente() {
   const fetchColetas = async () => {
     setLoading(true);
     try {
-      const res = await axios.get(`http://localhost:3000/cliente/${user.id}/coletas`);
+      const res = await axios.get(`http://localhost:3000/discard-requests/cliente/${user.id}`);
       setColetas(res.data);
     } catch (error) {
       console.error('Erro ao buscar coletas:', error);
@@ -31,11 +31,12 @@ export default function DashboardCliente() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      await axios.post('http://localhost:3000/discardrequests', {
+    try {   
+      await axios.post('http://localhost:3000/discard-requests', {
         ...formData,
         userId: user.id,
-      });
+      });      
+      
       setResponse({ type: 'success', message: 'Pedido criado com sucesso!' });
       setFormData({ type: '', description: '' });
       fetchColetas();

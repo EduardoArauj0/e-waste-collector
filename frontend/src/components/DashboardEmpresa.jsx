@@ -6,22 +6,18 @@ export default function DashboardEmpresa() {
   const [pendentes, setPendentes] = useState([]);
   const [aceitos, setAceitos] = useState([]);
   const [loading, setLoading] = useState(true);
-
+  const [processingId, setProcessingId] = useState(null); 
   const empresa = JSON.parse(localStorage.getItem('user'));
 
   const fetchPedidos = async () => {
+    if (!empresa) return; 
     setLoading(true);
     try {
       const resPendentes = await axios.get('http://localhost:3000/discard-requests/pendentes');
-
-      const resTodos = await axios.get('http://localhost:3000/discard-requests');
-
-      const pedidosAceitos = resTodos.data.filter(p =>
-        p.status === 'aceito' && p.companyId === empresa.id
-      );
+      const resAceitos = await axios.get(`http://localhost:3000/discard-requests/empresa/${empresa.id}/aceitos`);
 
       setPendentes(resPendentes.data);
-      setAceitos(pedidosAceitos);
+      setAceitos(resAceitos.data);
     } catch (err) {
       console.error('Erro ao buscar pedidos:', err);
     } finally {
@@ -29,21 +25,30 @@ export default function DashboardEmpresa() {
     }
   };
 
+  useEffect(() => {
+    if (empresa) {
+      fetchPedidos(); 
+    }
+  }, []); 
+
   const aceitarPedido = async (id) => {
+    setProcessingId(id); 
     try {
       await axios.put(`http://localhost:3000/discard-requests/${id}`, {
         status: 'aceito',
         companyId: empresa.id
       });
-      fetchPedidos();
+      await fetchPedidos(); 
     } catch (err) {
       console.error('Erro ao aceitar pedido:', err);
+    } finally {
+      setProcessingId(null); 
     }
   };
 
-  useEffect(() => {
-    fetchPedidos();
-  }, []);
+  if (!empresa) {
+    return <p>Erro: Empresa não logada.</p>; 
+  }
 
   return (
     <div className="p-6">
@@ -66,10 +71,11 @@ export default function DashboardEmpresa() {
               <p><strong>Cliente:</strong> {p.user?.name}</p>
               <p><strong>Endereço:</strong> {p.user?.street}, {p.user?.neighborhood}, {p.user?.city} - {p.user?.state}</p>
               <button
-                className="mt-2 bg-green-600 text-white px-4 py-1 rounded"
+                className="mt-2 bg-green-600 text-white px-4 py-1 rounded disabled:opacity-50"
                 onClick={() => aceitarPedido(p.id)}
+                disabled={processingId === p.id}
               >
-                Aceitar pedido
+                {processingId === p.id ? 'Aceitando...' : 'Aceitar pedido'}
               </button>
             </div>
           ))}

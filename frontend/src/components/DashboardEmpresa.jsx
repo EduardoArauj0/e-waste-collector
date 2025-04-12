@@ -4,35 +4,34 @@ import LogoutButton from './LogoutButton';
 
 export default function DashboardEmpresa() {
   const [pedidos, setPedidos] = useState([]);
-  const [resposta, setResposta] = useState(null);
+  const [loading, setLoading] = useState(true);
   const user = JSON.parse(localStorage.getItem('user'));
 
-  const buscarPedidos = async () => {
+  const fetchPedidosPendentes = async () => {
+    setLoading(true);
     try {
-      const res = await axios.get('http://localhost:3000/discardrequests');
-      const pendentes = res.data.filter(pedido => pedido.status === 'pendente');
-      setPedidos(pendentes);
-    } catch (err) {
-      console.error('Erro ao buscar pedidos:', err);
+      const res = await axios.get('http://localhost:3000/discardrequests/pendentes');
+      setPedidos(res.data);
+    } catch (error) {
+      console.error('Erro ao buscar pedidos pendentes:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-    buscarPedidos();
+    fetchPedidosPendentes();
   }, []);
 
-  const aceitarPedido = async (id) => {
+  const atualizarStatus = async (id, status) => {
     try {
       await axios.put(`http://localhost:3000/discardrequests/${id}`, {
-        status: 'aceito',
+        status,
         companyId: user.id,
       });
-
-      setResposta({ type: 'success', message: 'Pedido aceito com sucesso!' });
-      buscarPedidos(); // atualiza a lista
-    } catch (err) {
-      console.error('Erro ao aceitar pedido:', err);
-      setResposta({ type: 'error', message: 'Erro ao aceitar o pedido.' });
+      fetchPedidosPendentes();
+    } catch (error) {
+      console.error(`Erro ao atualizar pedido ${id}:`, error);
     }
   };
 
@@ -43,31 +42,38 @@ export default function DashboardEmpresa() {
         <LogoutButton />
       </div>
 
-      <h3 className="text-lg font-semibold mb-2">Pedidos pendentes:</h3>
+      <h3 className="text-lg font-semibold mb-2">Pedidos Pendentes:</h3>
 
-      {resposta && (
-        <p className={`mb-4 ${resposta.type === 'success' ? 'text-green-600' : 'text-red-600'}`}>
-          {resposta.message}
-        </p>
-      )}
-
-      {pedidos.length === 0 ? (
-        <p>Nenhum pedido pendente no momento.</p>
+      {loading ? (
+        <p>Carregando pedidos...</p>
+      ) : pedidos.length === 0 ? (
+        <p>Nenhum pedido pendente encontrado.</p>
       ) : (
-        <ul className="space-y-4">
+        <div className="grid gap-4">
           {pedidos.map((pedido) => (
-            <li key={pedido.id} className="border p-4 rounded shadow">
-              <p><strong>Tipo:</strong> {pedido.type}</p>
-              <p><strong>Descrição:</strong> {pedido.description}</p>
-              <button
-                className="mt-2 bg-green-600 text-white px-4 py-2 rounded"
-                onClick={() => aceitarPedido(pedido.id)}
-              >
-                Aceitar pedido
-              </button>
-            </li>
+            <div
+              key={pedido.id}
+              className="border rounded-xl shadow-sm p-4 bg-white"
+            >
+              <p className="font-semibold">Tipo: {pedido.type}</p>
+              <p>Descrição: {pedido.description}</p>
+              <div className="mt-2 flex gap-2">
+                <button
+                  onClick={() => atualizarStatus(pedido.id, 'aceito')}
+                  className="bg-green-600 text-white px-3 py-1 rounded"
+                >
+                  Aceitar
+                </button>
+                <button
+                  onClick={() => atualizarStatus(pedido.id, 'recusado')}
+                  className="bg-red-600 text-white px-3 py-1 rounded"
+                >
+                  Recusar
+                </button>
+              </div>
+            </div>
           ))}
-        </ul>
+        </div>
       )}
     </div>
   );

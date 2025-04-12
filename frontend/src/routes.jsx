@@ -12,7 +12,7 @@ export default function AppRoutes() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Login />} />
-        <Route path="/cadastro" element={<RegisterPage />} />
+        <Route path="/register" element={<RegisterPage />} />
 
         {/* Rotas protegidas */}
         <Route

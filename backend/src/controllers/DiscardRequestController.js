@@ -79,7 +79,14 @@ module.exports = {
       const { id } = req.params;
   
       const pedidos = await DiscardRequest.findAll({
-        where: { userId: id }
+        where: { userId: id },
+        include: [
+          {
+            model: User,
+            as: 'company',
+            attributes: ['name']
+          }
+        ]
       });
   
       if (pedidos.length === 0) {
@@ -90,7 +97,7 @@ module.exports = {
     } catch (error) {
       res.status(500).json({ error: 'Erro ao buscar pedidos do cliente' });
     }
-  },
+  }, 
 
   async findPendentes(req, res) {
     try {

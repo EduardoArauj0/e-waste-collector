@@ -100,6 +100,15 @@ export default function Login() {
         >
           Entrar
         </button>
+
+        <p className="text-sm mt-4">
+  Ainda não tem conta?{' '}
+  <a href="/register" className="text-blue-600 underline">
+    Cadastre-se aqui
+  </a>
+</p>
+
+
       </form>
     </div>
   );

@@ -114,17 +114,23 @@ export default function DashboardCliente() {
       ) : (
         <div className="grid gap-4">
           {coletas.map((coleta) => (
-            <div
-              key={coleta.id}
-              className="border rounded-xl shadow-sm p-4 bg-white"
-            >
-              <p className="font-semibold">Tipo: {coleta.type}</p>
-              <p>Descrição: {coleta.description}</p>
-              <p className={`mt-1 font-medium ${getStatusColor(coleta.status)}`}>
-                Status: {coleta.status}
-              </p>
-            </div>
-          ))}
+        <div
+          key={coleta.id}
+          className="border rounded-xl shadow-sm p-4 bg-white"
+        >
+          <p className="font-semibold">Tipo: {coleta.type}</p>
+          <p>Descrição: {coleta.description}</p>
+          <p className={`mt-1 font-medium ${getStatusColor(coleta.status)}`}>
+            Status: {coleta.status}
+          </p>
+
+          {coleta.status === 'aceito' && coleta.company?.name && (
+            <p className="text-sm text-gray-700">
+              Coleta aceita por: <span className="font-medium">{coleta.company.name}</span>
+            </p>
+          )}
+        </div>
+      ))}
         </div>
       )}
     </div>

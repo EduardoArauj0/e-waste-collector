@@ -8,5 +8,6 @@ router.get('/', DiscardRequestController.index);
 router.put('/:id', DiscardRequestController.update);
 router.delete('/:id', DiscardRequestController.delete);
 router.get('/pendentes', DiscardRequestController.findPendentes);
+router.get('/empresa/:id/aceitos', DiscardRequestController.findAceitosByEmpresa);
 
 module.exports = router;

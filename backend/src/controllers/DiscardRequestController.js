@@ -115,5 +115,29 @@ module.exports = {
     } catch (err) {
       return res.status(500).json({ error: 'Erro ao buscar pedidos pendentes' });
     }
+  },
+
+  async findAceitosByEmpresa(req, res) {
+    try {
+      const { id } = req.params;
+  
+      const aceitos = await DiscardRequest.findAll({
+        where: {
+          companyId: id,
+          status: 'aceito'
+        },
+        include: [
+          {
+            model: User,
+            as: 'user', 
+            attributes: ['name', 'street', 'neighborhood', 'city', 'state']
+          }
+        ]
+      });
+  
+      return res.json(aceitos);
+    } catch (err) {
+      return res.status(500).json({ error: 'Erro ao buscar pedidos aceitos pela empresa' });
+    }
   }
 };

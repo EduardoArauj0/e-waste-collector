@@ -20,7 +20,7 @@ export default function DashboardEmpresa() {
   };
 
   useEffect(() => {
-    fetchPedidosPendentes();
+      fetchPedidosPendentes();
   }, []);
 
   const atualizarStatus = async (id, status) => {
@@ -51,14 +51,12 @@ export default function DashboardEmpresa() {
       ) : (
         <div className="grid gap-4">
           {pedidos.map((pedido) => (
-              <div key={pedido.id} className="bg-white p-4 rounded-lg shadow mb-4">
-              <h2 className="text-lg font-bold">Pedido #{pedido.id}</h2>
-              <p><strong>Cliente:</strong> {pedido.User?.name}</p>
-              <p><strong>Local:</strong> {pedido.User?.street}, {pedido.User?.neighborhood}, {pedido.User?.city} - {pedido.User?.state}</p>
-              <p><strong>Status:</strong> {pedido.status}</p>
-              
-              <p className="font-semibold">Tipo: {pedido.type}</p>
-              <p>Descrição: {pedido.description}</p>
+              <div key={pedido.id} className="pedido">
+                  <p>Cliente: {pedido.user.name}</p>
+                  <p>Local: {pedido.user.street}, {pedido.user.neighborhood}, {pedido.user.city} - {pedido.user.state}</p>
+                  <p>Status: {pedido.status}</p>
+                  <p>Tipo: {pedido.type}</p>
+                  <p>Descrição: {pedido.description}</p>
               <div className="mt-2 flex gap-2">
                 <button
                   onClick={() => atualizarStatus(pedido.id, 'aceito')}

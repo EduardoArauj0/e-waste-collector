@@ -1,4 +1,5 @@
-const { DiscardRequest } = require('../models');
+const db = require('../models');
+const { DiscardRequest, User } = db;
 const discardRequestSchema = require('../validations/discardRequestValidator');
 
 module.exports = {
@@ -98,9 +99,10 @@ module.exports = {
         include: [
           {
             model: User,
+            as: 'user', 
             attributes: ['name', 'street', 'neighborhood', 'city', 'state'],
-          },
-        ],
+          }
+        ]
       });
       return res.json(pendentes);
     } catch (err) {

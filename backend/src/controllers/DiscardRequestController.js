@@ -14,7 +14,7 @@ module.exports = {
         userId,
         status: 'pendente',
       });
-
+      
       return res.status(201).json(discard);
     } catch (err) {
       if (err.name === 'ValidationError') {
@@ -89,5 +89,16 @@ module.exports = {
     } catch (error) {
       res.status(500).json({ error: 'Erro ao buscar pedidos do cliente' });
     }
-  }  
+  },
+
+  async findPendentes(req, res) {
+    try {
+      const pendentes = await DiscardRequest.findAll({
+        where: { status: 'pendente' }
+      });
+      return res.json(pendentes);
+    } catch (err) {
+      return res.status(500).json({ error: 'Erro ao buscar pedidos pendentes' });
+    }
+  }
 };

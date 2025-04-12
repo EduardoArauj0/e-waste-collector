@@ -14,7 +14,7 @@ module.exports = {
         userId,
         status: 'pendente',
       });
-      
+
       return res.status(201).json(discard);
     } catch (err) {
       if (err.name === 'ValidationError') {
@@ -94,7 +94,13 @@ module.exports = {
   async findPendentes(req, res) {
     try {
       const pendentes = await DiscardRequest.findAll({
-        where: { status: 'pendente' }
+        where: { status: 'pendente' },
+        include: [
+          {
+            model: User,
+            attributes: ['name', 'street', 'neighborhood', 'city', 'state'],
+          },
+        ],
       });
       return res.json(pendentes);
     } catch (err) {

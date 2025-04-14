@@ -4,7 +4,7 @@ const { User, DiscardRequest } = db;
 module.exports = {
   async getAllClientes(req, res) {
     try {
-      const clientes = await User.findAll({ where: { role: 'cliente' } }); // Ver clientes
+      const clientes = await User.findAll({ where: { role: 'cliente' } }); 
       return res.json(clientes);
     } catch (err) {
       return res.status(500).json({ error: 'Erro ao buscar clientes' });
@@ -13,7 +13,7 @@ module.exports = {
 
   async getAllEmpresas(req, res) {
     try {
-      const empresas = await User.findAll({ where: { role: 'empresa' } }); // Ver empresas
+      const empresas = await User.findAll({ where: { role: 'empresa' } }); 
       return res.json(empresas);
     } catch (err) {
       return res.status(500).json({ error: 'Erro ao buscar empresas' });
@@ -23,7 +23,7 @@ module.exports = {
   async updateCliente(req, res) {
     try {
       const { id } = req.params;
-      const { name, email, street, city } = req.body; // Campos que podem ser atualizados
+      const { name, email, street, city } = req.body;
 
       const cliente = await User.findByPk(id);
       if (!cliente) return res.status(404).json({ error: 'Cliente não encontrado' });

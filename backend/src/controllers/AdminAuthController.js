@@ -7,9 +7,6 @@ const senhaHash = process.env.ADMIN_PASSWORD;
 const login = async (req, res) => {
   const { email, password } = req.body;
 
-  console.log('Email fornecido:', email);
-  console.log('Senha fornecida:', password);
-
   if (email !== emailEnv) {
     return res.status(401).json({ message: 'Email inválido.' });
   }
@@ -27,6 +24,7 @@ const login = async (req, res) => {
   res.json({
     token,
     admin: { email },
+    role: 'admin',
   });
 };
 

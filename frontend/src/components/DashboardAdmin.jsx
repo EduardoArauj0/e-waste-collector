@@ -10,6 +10,7 @@ export default function DashboardAdmin() {
   const [loading, setLoading] = useState(true);
   const [processing, setProcessing] = useState(false);
   const [editandoStatusId, setEditandoStatusId] = useState(null);
+  const [novoStatus, setNovoStatus] = useState('');
   const [openSection, setOpenSection] = useState(null);
 
   const fetchDados = async () => {
@@ -64,7 +65,7 @@ export default function DashboardAdmin() {
     if (!novoStatus) return;
     setProcessing(true);
     try {
-      await axios.put(`http://localhost:3000/admin/pedidos/${id}`, { status: novoStatus });
+      await axios.put(`http://localhost:3000/admin/pedido/${id}`, { status: novoStatus });
       fetchDados();
     } catch (err) {
       console.error('Erro ao atualizar status do pedido:', err);
@@ -86,6 +87,7 @@ export default function DashboardAdmin() {
         <LogoutButton />
       </div>
 
+      {/* Clientes */}
       <div className="mb-6 border rounded-2xl shadow-sm">
         <div
           className="flex justify-between items-center cursor-pointer bg-green-100 px-4 py-3 rounded-t-2xl"
@@ -119,6 +121,7 @@ export default function DashboardAdmin() {
         )}
       </div>
 
+      {/* Empresas */}
       <div className="mb-6 border rounded-2xl shadow-sm">
         <div
           className="flex justify-between items-center cursor-pointer bg-blue-100 px-4 py-3 rounded-t-2xl"
@@ -152,6 +155,7 @@ export default function DashboardAdmin() {
         )}
       </div>
 
+      {/* Pedidos */}
       <div className="mb-6 border rounded-2xl shadow-sm">
         <div
           className="flex justify-between items-center cursor-pointer bg-yellow-100 px-4 py-3 rounded-t-2xl"
@@ -171,28 +175,45 @@ export default function DashboardAdmin() {
                     <p><strong>Tipo:</strong> {pedido.type}</p>
                     <p><strong>Descrição:</strong> {pedido.description}</p>
                     <div className="flex items-center gap-2 mt-2">
-                      <p><strong>Status:</strong> {pedido.status}</p>
+                      <p><strong>Status:</strong></p>
                       {editandoStatusId === pedido.id ? (
-                        <select
-                          className="border rounded px-2 py-1"
-                          value={pedido.status}
-                          onChange={(e) => {
-                            alterarStatusPedido(pedido.id, e.target.value);
-                            setEditandoStatusId(null);
-                          }}
-                          disabled={processing}
-                        >
-                          <option value="pendente">Pendente</option>
-                          <option value="em andamento">Em Andamento</option>
-                          <option value="concluído">Concluído</option>
-                        </select>
+                        <>
+                          <select
+                            className="border rounded px-2 py-1 mr-2"
+                            value={novoStatus}
+                            onChange={(e) => setNovoStatus(e.target.value)}
+                            disabled={processing}
+                          >
+                            <option value="pendente">Pendente</option>
+                            <option value="aceito">Aceito</option>
+                            <option value="recusado">Recusado</option>
+                            <option value="em andamento">Em Andamento</option>
+                            <option value="concluído">Concluído</option>
+                          </select>
+                          <button
+                            className="bg-green-600 text-white px-2 py-1 rounded hover:bg-green-700"
+                            onClick={() => {
+                              alterarStatusPedido(pedido.id, novoStatus);
+                              setEditandoStatusId(null);
+                            }}
+                            disabled={processing}
+                          >
+                            Salvar
+                          </button>
+                        </>
                       ) : (
-                        <button
-                          className="text-blue-600 text-sm underline hover:text-blue-800"
-                          onClick={() => setEditandoStatusId(pedido.id)}
-                        >
-                          Alterar status
-                        </button>
+                        <>
+                          <span>{pedido.status}</span>
+                          <button
+                            className="ml-2 text-blue-600 text-sm underline hover:text-blue-800"
+                            onClick={() => {
+                              setEditandoStatusId(pedido.id);
+                              setNovoStatus(pedido.status);
+                            }}
+                          >
+                            Editar
+                          </button>
+                        </>
                       )}
                     </div>
                   </div>

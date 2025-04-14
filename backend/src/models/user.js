@@ -7,13 +7,11 @@ const bcrypt = require('bcrypt');
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
     static associate(models) {
-      // Um usuário (cliente) pode ter muitos pedidos de descarte
       User.hasMany(models.DiscardRequest, {
         foreignKey: 'userId',
         as: 'requests'
       });
 
-      // Um usuário (empresa) pode aceitar muitos pedidos
       User.hasMany(models.DiscardRequest, {
         foreignKey: 'companyId',
         as: 'acceptedRequests'

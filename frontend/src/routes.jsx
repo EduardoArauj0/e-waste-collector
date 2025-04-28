@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Login from './pages/login';
 import RegisterPage from './pages/Register';
+import RecuperarSenha from "./pages/RecuperarSenha";
 import DashboardPage from './pages/DashboardPage';
 import DashboardCliente from './components/DashboardCliente';
 import DashboardEmpresa from './components/DashboardEmpresa';
@@ -13,6 +14,7 @@ export default function AppRoutes() {
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/register" element={<RegisterPage />} />
+        <Route path="/recuperar-senha" element={<RecuperarSenha />} />
 
         {/* Rotas protegidas */}
         <Route

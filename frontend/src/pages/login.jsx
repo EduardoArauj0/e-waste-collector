@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useState } from 'react';
 import axios from 'axios';
 import * as yup from 'yup';
@@ -128,6 +128,12 @@ export default function Login() {
           >
             Entrar
           </button>
+
+          <div className="text-center mt-4">
+            <Link to="/recuperar-senha" className="text-sm text-green-600 hover:underline">
+              Esqueceu sua senha?
+            </Link>
+          </div>
 
           <div className="flex justify-center items-center mt-6 text-sm text-gray-600">
             <span>Não tem conta?</span>

@@ -41,6 +41,7 @@ export default function Login() {
       localStorage.setItem('user', JSON.stringify(user));
       localStorage.setItem('token', token);
       localStorage.setItem('userType', role);
+      localStorage.setItem('userId', user.id);
 
       switch (role) {
         case 'cliente':

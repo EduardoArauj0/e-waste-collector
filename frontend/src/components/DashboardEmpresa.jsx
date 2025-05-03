@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import LogoutButton from './LogoutButton';
+import UserMenu from "./UserMenu";
 
 export default function DashboardEmpresa() {
   const [pendentes, setPendentes] = useState([]);
@@ -54,6 +55,7 @@ export default function DashboardEmpresa() {
     <div className="p-6">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl font-bold">Dashboard da Empresa</h2>
+        <UserMenu />
         <LogoutButton />
       </div>
 

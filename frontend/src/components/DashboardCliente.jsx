@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import LogoutButton from './LogoutButton';
+import UserMenu from "./UserMenu";
 
 export default function DashboardCliente() {
   const [coletas, setColetas] = useState([]);
@@ -63,6 +64,7 @@ export default function DashboardCliente() {
     <div className="p-6">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl font-bold">Dashboard Cliente</h2>
+        <UserMenu />
         <LogoutButton />
       </div>
 

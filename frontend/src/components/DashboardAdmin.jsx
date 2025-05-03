@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import LogoutButton from './LogoutButton';
+import UserMenu from "./UserMenu";
 import { ChevronDown, ChevronUp } from 'lucide-react';
 
 export default function DashboardAdmin() {
@@ -84,6 +85,7 @@ export default function DashboardAdmin() {
     <div className="max-w-5xl mx-auto p-6">
       <div className="flex justify-between items-center mb-8">
         <h2 className="text-3xl font-bold text-green-700">Painel Administrativo</h2>
+        <UserMenu />
         <LogoutButton />
       </div>
 

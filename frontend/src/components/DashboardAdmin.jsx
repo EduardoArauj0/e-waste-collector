@@ -39,7 +39,7 @@ export default function DashboardAdmin() {
     if (!confirm('Deseja excluir este cliente?')) return;
     setProcessing(true);
     try {
-      await axios.delete(`http://localhost:3000/admin/clientes/${id}`);
+      await axios.delete(`http://localhost:3000/admin/cliente/${id}`);
       fetchDados();
     } catch (err) {
       console.error('Erro ao excluir cliente:', err);
@@ -52,7 +52,7 @@ export default function DashboardAdmin() {
     if (!confirm('Deseja excluir esta empresa?')) return;
     setProcessing(true);
     try {
-      await axios.delete(`http://localhost:3000/admin/empresas/${id}`);
+      await axios.delete(`http://localhost:3000/admin/empresa/${id}`);
       fetchDados();
     } catch (err) {
       console.error('Erro ao excluir empresa:', err);

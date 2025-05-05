@@ -52,7 +52,7 @@ export default function RecuperarSenha() {
 
         <div className="text-center mt-6">
           <button
-            onClick={() => navigate("/login")}
+            onClick={() => navigate("/")}
             className="text-sm text-green-600 hover:underline"
           >
             Voltar para login

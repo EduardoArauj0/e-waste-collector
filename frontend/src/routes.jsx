@@ -3,6 +3,7 @@ import Login from './pages/login';
 import RegisterPage from './pages/Register';
 import RecuperarSenha from "./pages/RecuperarSenha";
 import DashboardPage from './pages/DashboardPage';
+import EditarPerfil from './pages/EditarPerfil';
 import DashboardCliente from './components/DashboardCliente';
 import DashboardEmpresa from './components/DashboardEmpresa';
 import DashboardAdmin from './components/DashboardAdmin';
@@ -15,6 +16,7 @@ export default function AppRoutes() {
         <Route path="/" element={<Login />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/recuperar-senha" element={<RecuperarSenha />} />
+        <Route path="/editar-perfil" element={<EditarPerfil />} />
 
         {/* Rotas protegidas */}
         <Route

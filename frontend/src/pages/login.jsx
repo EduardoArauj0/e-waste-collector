@@ -36,14 +36,18 @@ export default function Login() {
 
       const user = res.data.user || res.data.admin || res.data.cliente || res.data.empresa;
       const token = res.data.token;
-      const role = res.data.role || user.role;
+      const role = userType;
 
       localStorage.setItem('user', JSON.stringify(user));
       localStorage.setItem('token', token);
-      localStorage.setItem('userType', role);
+      localStorage.setItem('userType', userType);
       localStorage.setItem('userId', user.id);
-
-      switch (role) {
+      localStorage.setItem('userData', JSON.stringify({
+        id: user.id,
+        tipo: userType
+      }));
+    
+      switch (userType) {
         case 'cliente':
           navigate('/dashboard/cliente');
           break;

@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import LogoutButton from './LogoutButton';
 import UserMenu from "./UserMenu";
 
 export default function DashboardCliente() {
@@ -65,7 +64,6 @@ export default function DashboardCliente() {
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl font-bold">Dashboard Cliente</h2>
         <UserMenu />
-        <LogoutButton />
       </div>
 
       <h3 className="text-lg font-semibold mb-2">Novo Pedido de Coleta:</h3>

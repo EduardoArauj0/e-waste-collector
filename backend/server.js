@@ -1,7 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const app = express();
-const adminAuthRoutes = require('./src/routes/adminAuthRoutes');
+const LoginRoutes = require('./src/routes/LoginRoutes');
 const adminRoutes = require('./src/routes/adminRoutes');
 const userRoutes = require('./src/routes/userRoutes');
 const discardRequestRoutes = require('./src/routes/discardRequestRoutes');
@@ -9,7 +9,7 @@ const cors = require('cors');
 
 app.use(cors());
 app.use(express.json());
-app.use('/admin', adminAuthRoutes);
+app.use('/', LoginRoutes);
 app.use('/admin', adminRoutes);
 app.use('/users', userRoutes);
 app.use('/discard-requests', discardRequestRoutes);

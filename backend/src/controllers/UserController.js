@@ -1,7 +1,7 @@
 const axios = require('axios');
 const bcrypt = require('bcrypt');
 const { User } = require('../models');
-const { registerSchema, loginSchema } = require('../validations/userValidation');
+const { registerSchema } = require('../validations/userValidation');
 
 module.exports = {
   async register(req, res) {
@@ -63,41 +63,6 @@ module.exports = {
         error: 'Erro ao cadastrar usuário',
         details: err.message
       });
-    }
-  },
-
-  async login(req, res) {
-    try {
-      await loginSchema.validate(req.body, { abortEarly: false });
-
-      const email = req.body.email.trim();
-      const password = req.body.password;
-      
-      const user = await User.findOne({ where: { email } });
-
-      if (!user) {
-        return res.status(401).json({ error: 'Email ou senha inválidos' });
-      }
-
-      const isMatch = await bcrypt.compare(password, user.password);
-
-      if (!isMatch) {
-        return res.status(401).json({ error: 'Email ou senha inválidos' });
-      }
-
-      const userData = user.toJSON();
-      delete userData.password;
-
-      return res.json({
-        message: 'Login bem-sucedido',
-        user: userData
-      });
-    } catch (err) {
-      if (err.name === 'ValidationError') {
-        return res.status(400).json({ error: 'Erro de validação', messages: err.errors });
-      }
-
-      return res.status(500).json({ error: 'Erro ao fazer login' });
     }
   },
 

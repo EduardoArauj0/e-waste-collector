@@ -27,10 +27,7 @@ export default function Login() {
     try {
       await loginSchema.validate(formData, { abortEarly: false });
 
-      const url =
-        userType === 'admin'
-          ? 'http://localhost:3000/admin/login'
-          : 'http://localhost:3000/users/login';
+      const url = 'http://localhost:3000/login';
 
       const res = await axios.post(url, formData);
 
@@ -47,7 +44,7 @@ export default function Login() {
         tipo: userType
       }));
     
-      switch (userType) {
+      switch (res.data.role) {
         case 'cliente':
           navigate('/dashboard/cliente');
           break;
@@ -58,7 +55,7 @@ export default function Login() {
           navigate('/dashboard/admin');
           break;
         default:
-          navigate('/dashboard');
+          navigate('/');
       }
 
       setResponse({ type: 'success', message: 'Login realizado com sucesso!' });
@@ -90,18 +87,6 @@ export default function Login() {
         )}
 
         <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <label className="block mb-1 text-gray-700 text-sm font-semibold">Tipo de usuário:</label>
-            <select
-              className="w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-green-400"
-              value={userType}
-              onChange={(e) => setUserType(e.target.value)}
-            >
-              <option value="cliente">Cliente</option>
-              <option value="empresa">Empresa</option>
-              <option value="admin">Admin</option>
-            </select>
-          </div>
 
           <div className="mb-4">
             <label className="block mb-1 text-gray-700 text-sm font-semibold">Email:</label>

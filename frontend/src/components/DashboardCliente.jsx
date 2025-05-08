@@ -4,7 +4,7 @@ import UserMenu from "./UserMenu";
 
 export default function DashboardCliente() {
   const [coletas, setColetas] = useState([]);
-  const [formData, setFormData] = useState({ type: '', description: '' });
+  const [residuos, setResiduos] = useState([{ type: '', description: '' }]);
   const [response, setResponse] = useState(null);
   const [loading, setLoading] = useState(true);
   const user = JSON.parse(localStorage.getItem('user'));
@@ -25,24 +25,37 @@ export default function DashboardCliente() {
     fetchColetas();
   }, [user.id]);
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  const handleChange = (index, e) => {
+    const updated = [...residuos];
+    updated[index][e.target.name] = e.target.value;
+    setResiduos(updated);
+  };
+
+  const handleAddResíduo = () => {
+    setResiduos([...residuos, { type: '', description: '' }]);
+  };
+
+  const handleRemoveResíduo = (index) => {
+    const updated = [...residuos];
+    updated.splice(index, 1);
+    setResiduos(updated);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {   
+    try {
       await axios.post('http://localhost:3000/discard-requests', {
-        ...formData,
         userId: user.id,
-      });      
+        residuos,
+      });
       
-      setResponse({ type: 'success', message: 'Pedido criado com sucesso!' });
-      setFormData({ type: '', description: '' });
+
+      setResponse({ type: 'success', message: 'Pedido(s) criado(s) com sucesso!' });
+      setResiduos([{ type: '', description: '' }]);
       fetchColetas();
     } catch (err) {
-      console.error('Erro ao criar pedido:', err);
-      setResponse({ type: 'error', message: 'Erro ao criar pedido' });
+      console.error('Erro ao criar pedidos:', err);
+      setResponse({ type: 'error', message: 'Erro ao criar pedidos' });
     }
   };
 
@@ -67,28 +80,50 @@ export default function DashboardCliente() {
       </div>
 
       <h3 className="text-lg font-semibold mb-2">Novo Pedido de Coleta:</h3>
-      <form onSubmit={handleSubmit} className="mb-6 flex flex-wrap gap-2">
-        <input
-          type="text"
-          name="type"
-          placeholder="Tipo de resíduo"
-          value={formData.type}
-          onChange={handleChange}
-          className="border p-2 rounded flex-1 min-w-[150px]"
-          required
-        />
-        <input
-          type="text"
-          name="description"
-          placeholder="Descrição"
-          value={formData.description}
-          onChange={handleChange}
-          className="border p-2 rounded flex-1 min-w-[150px]"
-          required
-        />
-        <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded">
-          Enviar
-        </button>
+      <form onSubmit={handleSubmit} className="mb-6 space-y-4">
+        {residuos.map((residuo, index) => (
+          <div key={index} className="flex flex-wrap gap-2 items-center">
+            <input
+              type="text"
+              name="type"
+              placeholder="Tipo de resíduo"
+              value={residuo.type}
+              onChange={(e) => handleChange(index, e)}
+              className="border p-2 rounded flex-1 min-w-[150px]"
+              required
+            />
+            <input
+              type="text"
+              name="description"
+              placeholder="Descrição"
+              value={residuo.description}
+              onChange={(e) => handleChange(index, e)}
+              className="border p-2 rounded flex-1 min-w-[150px]"
+              required
+            />
+            {residuos.length > 1 && (
+              <button
+                type="button"
+                onClick={() => handleRemoveResíduo(index)}
+                className="text-red-500 text-sm"
+              >
+                Remover
+              </button>
+            )}
+          </div>
+        ))}
+        <div className="flex gap-4 mt-2">
+          <button
+            type="button"
+            onClick={handleAddResíduo}
+            className="bg-gray-300 px-3 py-1 rounded"
+          >
+            + Adicionar Resíduo
+          </button>
+          <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded">
+            Enviar
+          </button>
+        </div>
       </form>
 
       {response && (
@@ -114,23 +149,23 @@ export default function DashboardCliente() {
       ) : (
         <div className="grid gap-4">
           {coletas.map((coleta) => (
-        <div
-          key={coleta.id}
-          className="border rounded-xl shadow-sm p-4 bg-white"
-        >
-          <p className="font-semibold">Tipo: {coleta.type}</p>
-          <p>Descrição: {coleta.description}</p>
-          <p className={`mt-1 font-medium ${getStatusColor(coleta.status)}`}>
-            Status: {coleta.status}
-          </p>
+            <div
+              key={coleta.id}
+              className="border rounded-xl shadow-sm p-4 bg-white"
+            >
+              <p className="font-semibold">Tipo: {coleta.type}</p>
+              <p>Descrição: {coleta.description}</p>
+              <p className={`mt-1 font-medium ${getStatusColor(coleta.status)}`}>
+                Status: {coleta.status}
+              </p>
 
-          {coleta.status === 'aceito' && coleta.company?.name && (
-            <p className="text-sm text-gray-700">
-              Coleta aceita por: <span className="font-medium">{coleta.company.name}</span>
-            </p>
-          )}
-        </div>
-      ))}
+              {coleta.status === 'aceito' && coleta.company?.name && (
+                <p className="text-sm text-gray-700">
+                  Coleta aceita por: <span className="font-medium">{coleta.company.name}</span>
+                </p>
+              )}
+            </div>
+          ))}
         </div>
       )}
     </div>

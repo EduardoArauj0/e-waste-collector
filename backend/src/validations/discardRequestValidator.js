@@ -1,9 +1,11 @@
-const yup = require('yup');
+import * as yup from 'yup';
 
-const discardRequestSchema = yup.object().shape({
-  type: yup.string().required('Tipo é obrigatório'),
-  description: yup.string().required('Descrição é obrigatória'),
-  userId: yup.number().required('ID do usuário é obrigatório').integer().positive(),
+export const discardRequestSchema = yup.object().shape({
+  userId: yup.number().required('O ID do usuário é obrigatório'),
+  residuos: yup.array().of(
+    yup.object().shape({
+      type: yup.string().required('O tipo é obrigatório'),
+      description: yup.string().required('A descrição é obrigatória')
+    })
+  ).min(1, 'É necessário informar ao menos um resíduo'),
 });
-
-module.exports = discardRequestSchema;

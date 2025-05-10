@@ -110,7 +110,7 @@ module.exports = {
           {
             model: User,
             as: 'user', 
-            attributes: ['name', 'street', 'neighborhood', 'city', 'state'],
+            attributes: ['name', 'street', 'neighborhood', 'city', 'state', 'cep', 'number'],
           }
         ]
       });

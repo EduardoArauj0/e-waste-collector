@@ -69,7 +69,7 @@ export default function DashboardEmpresa() {
               <p><strong>Tipo:</strong> {p.type}</p>
               <p><strong>Descrição:</strong> {p.description}</p>
               <p><strong>Cliente:</strong> {p.user?.name}</p>
-              <p><strong>Endereço:</strong> {p.user?.street}, {p.user?.neighborhood}, {p.user?.city} - {p.user?.state}</p>
+              <p><strong>Endereço:</strong> {p.user?.street}, Nº {p.user?.number}, {p.user?.neighborhood}, {p.user?.city} - {p.user?.state}, CEP: {p.user?.cep}</p>
               <button
                 className="mt-2 bg-green-600 text-white px-4 py-1 rounded disabled:opacity-50"
                 onClick={() => aceitarPedido(p.id)}

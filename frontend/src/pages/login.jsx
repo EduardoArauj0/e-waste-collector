@@ -35,6 +35,7 @@ export default function Login() {
 
       localStorage.setItem('user', JSON.stringify(user));
       localStorage.setItem('token', token);
+      localStorage.setItem('userData', JSON.stringify(user));
       localStorage.setItem('userType', user.role);
 
       switch (user.role) {

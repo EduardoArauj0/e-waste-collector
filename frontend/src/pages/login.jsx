@@ -31,20 +31,13 @@ export default function Login() {
 
       const res = await axios.post(url, formData);
 
-      const user = res.data.user || res.data.admin || res.data.cliente || res.data.empresa;
-      const token = res.data.token;
-      const role = userType;
+      const { token, user } = res.data;
 
       localStorage.setItem('user', JSON.stringify(user));
       localStorage.setItem('token', token);
-      localStorage.setItem('userType', userType);
-      localStorage.setItem('userId', user.id);
-      localStorage.setItem('userData', JSON.stringify({
-        id: user.id,
-        tipo: userType
-      }));
-    
-      switch (res.data.role) {
+      localStorage.setItem('userType', user.role);
+
+      switch (user.role) {
         case 'cliente':
           navigate('/dashboard/cliente');
           break;

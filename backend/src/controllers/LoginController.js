@@ -17,19 +17,18 @@ module.exports = {
         const token = jwt.sign({ email, role: 'admin' }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
         return res.json({
-          message: 'Login admin bem-sucedido',
+          message: 'Login realizado com sucesso',
           token,
-          user: { email },
-          role: 'admin',
+          user: { email, role: 'admin' },
         });
       }
 
       const user = await User.findOne({ where: { email } });
 
-      if (!user) return res.status(401).json({ error: 'Email ou senha inválidos' });
+      if (!user) return res.status(401).json({ message: 'Email ou senha inválidos' });
 
       const isMatch = await bcrypt.compare(password, user.password);
-      if (!isMatch) return res.status(401).json({ error: 'Email ou senha inválidos' });
+      if (!isMatch) return res.status(401).json({ message: 'Email ou senha inválidos' });
 
       const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
@@ -37,13 +36,12 @@ module.exports = {
       delete userData.password;
 
       return res.json({
-        message: 'Login bem-sucedido',
+        message: 'Login realizado com sucesso',
         token,
-        user: userData,
-        role: user.role,
+        user: { id: userData.id, email: userData.email, role: userData.role },
       });
     } catch (error) {
-      return res.status(500).json({ error: 'Erro ao fazer login' });
+      return res.status(500).json({ message: 'Erro ao fazer login' });
     }
   }
 };

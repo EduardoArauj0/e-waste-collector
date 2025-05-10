@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 const EditarPerfil = () => {
@@ -16,24 +16,27 @@ const EditarPerfil = () => {
     state: '',
   });
   const [loading, setLoading] = useState(true);
+  const [message, setMessage] = useState(null);  
+  const [isError, setIsError] = useState(false); 
+  const navigate = useNavigate(); 
 
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const storedData = localStorage.getItem('userData');
+        const storedData = localStorage.getItem('user');
         if (storedData) {
-          const { id, tipo } = JSON.parse(storedData);
-          setTipoUsuario(tipo);
+          const { id, role } = JSON.parse(storedData);
+          setTipoUsuario(role);
           let response;
 
-          if (tipo === 'cliente') {
+          if (role === 'cliente') {
             response = await axios.get(`http://localhost:3000/admin/clientes`);
             const userData = response.data.find((c) => c.id === id);
             if (userData) {
               setUser(userData);
               setFormData({ ...formData, ...userData });
             }
-          } else if (tipo === 'empresa') {
+          } else if (role === 'empresa') {
             response = await axios.get(`http://localhost:3000/admin/empresas`);
             const userData = response.data.find((e) => e.id === id);
             if (userData) {
@@ -50,7 +53,6 @@ const EditarPerfil = () => {
     };
 
     fetchUserData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const buscarCep = async (cep) => {
@@ -96,8 +98,8 @@ const EditarPerfil = () => {
     try {
       const endpoint =
         tipoUsuario === 'cliente'
-          ? `http://localhost:3000/clientes/${user.id}`
-          : `http://localhost:3000/empresas/${user.id}`;
+          ? `http://localhost:3000/admin/cliente/${user.id}`
+          : `http://localhost:3000/admin/empresa/${user.id}`;
 
       const dataParaEnviar = {
         cep: formData.cep,
@@ -110,10 +112,30 @@ const EditarPerfil = () => {
 
       await axios.put(endpoint, dataParaEnviar);
 
-      alert('Perfil atualizado com sucesso!');
+      setMessage('Perfil atualizado com sucesso!');
+      setIsError(false); 
     } catch (error) {
       console.error('Erro ao atualizar perfil:', error);
-      alert('Erro ao atualizar perfil.');
+      setMessage('Erro ao atualizar perfil.');
+      setIsError(true);
+    }
+  };
+
+  const handleBackToHome = () => {
+    const userType = localStorage.getItem('userType');
+
+    switch (userType) {
+      case 'cliente':
+        navigate('/dashboard/cliente');
+        break;
+      case 'empresa':
+        navigate('/dashboard/empresa');
+        break;
+      case 'admin':
+        navigate('/dashboard/admin');
+        break;
+      default:
+        navigate('/');
     }
   };
 
@@ -200,7 +222,7 @@ const EditarPerfil = () => {
             />
           </div>
 
-          <div className="mb-5">
+          <div className="mb-4">
             <label className="block text-sm font-medium">Estado</label>
             <input
               type="text"
@@ -211,25 +233,31 @@ const EditarPerfil = () => {
             />
           </div>
 
+          {message && (
+            <p className={`text-sm mb-4 text-center ${isError ? 'text-red-600' : 'text-green-600'}`}>
+              {message}
+            </p>
+          )}
+
           <button
             type="submit"
-            className="w-full py-2 bg-green-600 text-white rounded hover:bg-green-700"
+            className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2 rounded"
           >
-            Atualizar Perfil
+            Salvar Alterações
           </button>
-          <Link
-            to="/recuperar-senha"
-            className="block w-full mt-3 py-2 text-center bg-green-100 text-green-700 rounded hover:bg-green-200"
-            >
-            Esqueceu sua senha?
-            </Link>
-          
+
+          <button
+            type="button"
+            onClick={handleBackToHome}
+            className="w-full mt-4 bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 rounded"
+          >
+            Voltar
+          </button>
         </form>
       ) : (
-        <p>Não foi possível carregar os dados do usuário.</p>
+        <p>Usuário não encontrado.</p>
       )}
     </div>
-    
   );
 };
 

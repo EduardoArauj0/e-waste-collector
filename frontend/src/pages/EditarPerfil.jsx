@@ -102,6 +102,8 @@ const EditarPerfil = () => {
           : `http://localhost:3000/admin/empresa/${user.id}`;
 
       const dataParaEnviar = {
+        name: formData.name,
+        email: formData.email,
         cep: formData.cep,
         street: formData.street,
         number: formData.number,
@@ -150,7 +152,9 @@ const EditarPerfil = () => {
             <label className="block text-sm font-medium">Nome</label>
             <input
               type="text"
+              name="name"
               value={formData.name}
+              onChange={handleChange}
               disabled
               className="w-full p-2 mt-1 bg-gray-100 border border-gray-300 rounded"
             />
@@ -160,7 +164,9 @@ const EditarPerfil = () => {
             <label className="block text-sm font-medium">Email</label>
             <input
               type="email"
+              name="email"
               value={formData.email}
+              onChange={handleChange}
               disabled
               className="w-full p-2 mt-1 bg-gray-100 border border-gray-300 rounded"
             />

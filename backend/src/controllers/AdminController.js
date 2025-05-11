@@ -23,15 +23,21 @@ module.exports = {
   async updateCliente(req, res) {
     try {
       const { id } = req.params;
-      const { name, email, street, city } = req.body;
+      const {
+        name, email, cep, street, number, neighborhood, city, state
+      } = req.body;
 
       const cliente = await User.findByPk(id);
       if (!cliente) return res.status(404).json({ error: 'Cliente não encontrado' });
 
-      cliente.name = name || cliente.name;
-      cliente.email = email || cliente.email;
-      cliente.street = street || cliente.street;
-      cliente.city = city || cliente.city;
+      cliente.name = name ?? cliente.name;
+      cliente.email = email ?? cliente.email;
+      cliente.cep = cep ?? cliente.cep;
+      cliente.street = street ?? cliente.street;
+      cliente.number = number ?? cliente.number;
+      cliente.neighborhood = neighborhood ?? cliente.neighborhood;
+      cliente.city = city ?? cliente.city;
+      cliente.state = state ?? cliente.state;
 
       await cliente.save();
       return res.json(cliente);
@@ -56,15 +62,21 @@ module.exports = {
   async updateEmpresa(req, res) {
     try {
       const { id } = req.params;
-      const { name, email, street, city } = req.body;
+      const {
+        name, email, cep, street, number, neighborhood, city, state
+      } = req.body;
 
       const empresa = await User.findByPk(id);
       if (!empresa) return res.status(404).json({ error: 'Empresa não encontrada' });
 
-      empresa.name = name || empresa.name;
-      empresa.email = email || empresa.email;
-      empresa.street = street || empresa.street;
-      empresa.city = city || empresa.city;
+      empresa.name = name ?? empresa.name;
+      empresa.email = email ?? empresa.email;
+      empresa.cep = cep ?? empresa.cep;
+      empresa.street = street ?? empresa.street;
+      empresa.number = number ?? empresa.number;
+      empresa.neighborhood = neighborhood ?? empresa.neighborhood;
+      empresa.city = city ?? empresa.city;
+      empresa.state = state ?? empresa.state;
 
       await empresa.save();
       return res.json(empresa);

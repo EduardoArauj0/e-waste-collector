@@ -6,10 +6,16 @@ const { registerSchema } = require('../validations/userValidation');
 module.exports = {
   async register(req, res) {
     try {
-      const { cep } = req.body;
+      const { cep, email } = req.body;
 
+      // Verifica se o email já está em uso
+      const existingUser = await User.findOne({ where: { email } });
+      if (existingUser) {
+        return res.status(400).json({ error: 'Email já cadastrado.' });
+      }
+
+      // Consulta endereço no ViaCEP
       const viaCepRes = await axios.get(`https://viacep.com.br/ws/${cep}/json/`);
-
       if (viaCepRes.data.erro) {
         return res.status(400).json({ error: 'CEP inválido' });
       }
@@ -21,11 +27,11 @@ module.exports = {
       req.body.city = req.body.city || localidade;
       req.body.state = req.body.state || uf;
 
+      // Validação do corpo da requisição
       await registerSchema.validate(req.body, { abortEarly: false });
 
       const {
         name,
-        email,
         password,
         role,
         street,
@@ -40,7 +46,7 @@ module.exports = {
       const user = await User.create({
         name,
         email,
-        password,
+        password: hashedPassword,
         role,
         cep,
         street,

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import * as yup from 'yup';
 
@@ -16,6 +17,8 @@ const registerSchema = yup.object().shape({
 });
 
 export default function Register() {
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -69,7 +72,11 @@ export default function Register() {
       const response = await axios.post('http://localhost:3000/users/register', formData);
       console.log('Resposta do backend:', response.data);
 
-      setResponse({ type: 'success', message: 'Usuário cadastrado com sucesso!' });
+      setResponse({ type: 'success', message: 'Usuário cadastrado com sucesso! Redirecionando...' });
+
+      setTimeout(() => {
+        navigate('/login');
+      }, 2000);
     } catch (err) {
       console.error('Erro no cadastro:', err);
       if (err.name === 'ValidationError') {
@@ -93,40 +100,16 @@ export default function Register() {
         </p>
       )}
       <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-4">
-        <input
-          name="name"
-          placeholder="Nome"
-          value={formData.name}
-          onChange={handleChange}
-          className="border p-2 rounded"
-        />
+        <input name="name" placeholder="Nome" value={formData.name} onChange={handleChange} className="border p-2 rounded" />
         {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
 
-        <input
-          name="email"
-          placeholder="Email"
-          value={formData.email}
-          onChange={handleChange}
-          className="border p-2 rounded"
-        />
+        <input name="email" placeholder="Email" value={formData.email} onChange={handleChange} className="border p-2 rounded" />
         {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
 
-        <input
-          type="password"
-          name="password"
-          placeholder="Senha"
-          value={formData.password}
-          onChange={handleChange}
-          className="border p-2 rounded"
-        />
+        <input type="password" name="password" placeholder="Senha" value={formData.password} onChange={handleChange} className="border p-2 rounded" />
         {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
 
-        <select
-          name="role"
-          value={formData.role}
-          onChange={handleChange}
-          className="border p-2 rounded"
-        >
+        <select name="role" value={formData.role} onChange={handleChange} className="border p-2 rounded">
           <option value="">Selecione o perfil</option>
           <option value="cliente">Cliente</option>
           <option value="empresa">Empresa</option>
@@ -146,57 +129,36 @@ export default function Register() {
         />
         {errors.cep && <p className="text-red-500 text-sm">{errors.cep}</p>}
 
-        <input
-          name="street"
-          placeholder="Rua"
-          value={formData.street}
-          onChange={handleChange}
-          className="border p-2 rounded"
-        />
+        <input name="street" placeholder="Rua" value={formData.street} onChange={handleChange} className="border p-2 rounded" />
         {errors.street && <p className="text-red-500 text-sm">{errors.street}</p>}
 
-        <input
-          name="number"
-          placeholder="Número"
-          value={formData.number}
-          onChange={handleChange}
-          className="border p-2 rounded"
-        />
+        <input name="number" placeholder="Número" value={formData.number} onChange={handleChange} className="border p-2 rounded" />
         {errors.number && <p className="text-red-500 text-sm">{errors.number}</p>}
 
-        <input
-          name="neighborhood"
-          placeholder="Bairro"
-          value={formData.neighborhood}
-          onChange={handleChange}
-          className="border p-2 rounded"
-        />
+        <input name="neighborhood" placeholder="Bairro" value={formData.neighborhood} onChange={handleChange} className="border p-2 rounded" />
         {errors.neighborhood && <p className="text-red-500 text-sm">{errors.neighborhood}</p>}
 
-        <input
-          name="city"
-          placeholder="Cidade"
-          value={formData.city}
-          onChange={handleChange}
-          className="border p-2 rounded"
-        />
+        <input name="city" placeholder="Cidade" value={formData.city} onChange={handleChange} className="border p-2 rounded" />
         {errors.city && <p className="text-red-500 text-sm">{errors.city}</p>}
 
-        <input
-          name="state"
-          placeholder="Estado"
-          value={formData.state}
-          onChange={handleChange}
-          className="border p-2 rounded"
-        />
+        <input name="state" placeholder="Estado" value={formData.state} onChange={handleChange} className="border p-2 rounded" />
         {errors.state && <p className="text-red-500 text-sm">{errors.state}</p>}
 
-        <button
-          type="submit"
-          className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
-        >
-          Cadastrar
-        </button>
+        <div className="flex justify-between mt-4">
+          <button
+            type="button"
+            onClick={() => navigate('/login')}
+            className="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400"
+          >
+            Voltar
+          </button>
+          <button
+            type="submit"
+            className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+          >
+            Cadastrar
+          </button>
+        </div>
       </form>
     </div>
   );

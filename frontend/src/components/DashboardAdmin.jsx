@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import UserMenu from './UserMenu';
+import LogoutButton from './LogoutButton';
 import PainelPedidos from './PainelPedidos';
 import PainelClientes from './PainelClientes';
 import PainelEmpresas from './PainelEmpresas';
@@ -123,9 +123,11 @@ export default function DashboardAdmin() {
       </aside>
 
       <main className="flex-1 p-6 overflow-y-auto">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-bold text-gray-800">Admin</h2>
-          <UserMenu />
+        <div className="flex items-center mb-6">
+          <h2 className="text-xl font-bold text-gray-800">Admin</h2>         
+          <div className="ml-auto">
+            <LogoutButton />
+          </div>
         </div>
 
         {loading ? (

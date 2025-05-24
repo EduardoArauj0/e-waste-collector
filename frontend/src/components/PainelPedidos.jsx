@@ -1,4 +1,11 @@
+import React, { useState } from 'react';
+
 export default function PainelPedidos({ pedidos, empresas, clientes, onEdit, onDelete, editingId, editData, setEditData, setEditingId, salvarEdicao }) {
+  const [statusFiltro, setStatusFiltro] = useState('');
+  const [buscaCliente, setBuscaCliente] = useState('');
+  const [paginaAtual, setPaginaAtual] = useState(1);
+  const itensPorPagina = 10;
+
   const getEmpresaNome = (id) => {
     const empresa = empresas.find((e) => e.id === id);
     return empresa ? empresa.name : '-';
@@ -6,6 +13,24 @@ export default function PainelPedidos({ pedidos, empresas, clientes, onEdit, onD
 
   const getCliente = (id) => {
     return clientes.find(c => c.id === id);
+  };
+
+  const pedidosFiltrados = pedidos.filter(pedido => {
+    const cliente = getCliente(pedido.userId);
+    const nomeCliente = cliente?.name?.toLowerCase() || '';
+    return (
+      (statusFiltro === '' || pedido.status === statusFiltro) &&
+      (buscaCliente === '' || nomeCliente.includes(buscaCliente.toLowerCase()))
+    );
+  });
+
+  const totalPaginas = Math.ceil(pedidosFiltrados.length / itensPorPagina);
+  const pedidosPaginados = pedidosFiltrados.slice((paginaAtual - 1) * itensPorPagina, paginaAtual * itensPorPagina);
+
+  const mudarPagina = (novaPagina) => {
+    if (novaPagina >= 1 && novaPagina <= totalPaginas) {
+      setPaginaAtual(novaPagina);
+    }
   };
 
   return (
@@ -31,6 +56,24 @@ export default function PainelPedidos({ pedidos, empresas, clientes, onEdit, onD
         </div>
       </div>
 
+      <div className="flex flex-col md:flex-row md:items-center gap-4 mb-4">
+        <select value={statusFiltro} onChange={(e) => setStatusFiltro(e.target.value)} className="border p-2 rounded">
+          <option value="">Todos os status</option>
+          <option value="pendente">Pendente</option>
+          <option value="aceito">Aceito</option>
+          <option value="em andamento">Em Andamento</option>
+          <option value="concluído">Concluído</option>
+          <option value="recusado">Recusado</option>
+        </select>
+        <input
+          type="text"
+          placeholder="Buscar por cliente"
+          value={buscaCliente}
+          onChange={(e) => setBuscaCliente(e.target.value)}
+          className="border p-2 rounded flex-1"
+        />
+      </div>
+
       <div className="overflow-auto rounded shadow border">
         <table className="w-full text-left border-collapse">
           <thead className="bg-gray-100 text-gray-700">
@@ -46,7 +89,7 @@ export default function PainelPedidos({ pedidos, empresas, clientes, onEdit, onD
             </tr>
           </thead>
           <tbody>
-            {pedidos.map((pedido) => {
+            {pedidosPaginados.map((pedido) => {
               const cliente = getCliente(pedido.userId);
               return (
                 <tr key={pedido.id} className="border-t hover:bg-gray-50">
@@ -97,6 +140,16 @@ export default function PainelPedidos({ pedidos, empresas, clientes, onEdit, onD
             })}
           </tbody>
         </table>
+      </div>
+
+      <div className="flex justify-between items-center mt-4">
+        <span className="text-sm text-gray-700">
+          Página {paginaAtual} de {totalPaginas}
+        </span>
+        <div className="space-x-2">
+          <button onClick={() => mudarPagina(paginaAtual - 1)} className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300">Anterior</button>
+          <button onClick={() => mudarPagina(paginaAtual + 1)} className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300">Próxima</button>
+        </div>
       </div>
     </div>
   );

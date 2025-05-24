@@ -52,6 +52,40 @@ export default function DashboardAdmin() {
     }
   };
 
+  const handleEditEmpresa = async (id, dadosAtualizados) => {
+    try {
+      const response = await fetch(`http://localhost:3000/admin/empresas/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(dadosAtualizados),
+      });
+
+      if (!response.ok) throw new Error('Erro ao atualizar empresa');
+      const empresaAtualizada = await response.json();
+
+      setEmpresas(empresas.map(e => e.id === id ? empresaAtualizada : e));
+    } catch (error) {
+      console.error(error);
+      alert('Erro ao salvar empresa');
+    }
+  };
+
+  const handleDeleteEmpresa = async (id) => {
+    if (!confirm('Tem certeza que deseja excluir esta empresa?')) return;
+    try {
+      const response = await fetch(`http://localhost:3000/admin/empresas/${id}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) throw new Error('Erro ao excluir empresa');
+
+      setEmpresas(empresas.filter(e => e.id !== id));
+    } catch (error) {
+      console.error(error);
+      alert('Erro ao excluir empresa');
+    }
+  };
+
   useEffect(() => {
     fetchDados();
   }, []);
@@ -92,7 +126,13 @@ export default function DashboardAdmin() {
               />
             )}
             {activeTab === 'clientes' && <PainelClientes clientes={clientes} />}
-            {activeTab === 'empresas' && <PainelEmpresas empresas={empresas} />}
+            {activeTab === 'empresas' && (
+              <PainelEmpresas
+                empresas={empresas}
+                onEdit={handleEditEmpresa}
+                onDelete={handleDeleteEmpresa}
+              />
+            )}
           </div>
         )}
       </main>

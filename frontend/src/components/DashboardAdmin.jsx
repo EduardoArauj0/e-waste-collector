@@ -52,6 +52,27 @@ export default function DashboardAdmin() {
     }
   };
 
+    const handleEditCliente = async (id, dadosAtualizados) => {
+    try {
+      const response = await axios.put(`http://localhost:3000/admin/cliente/${id}`, dadosAtualizados);
+      const clienteAtualizado = response.data;
+      setClientes(clientes.map(c => c.id === id ? clienteAtualizado : c));
+    } catch (error) {
+      console.error(error);
+      alert('Erro ao salvar cliente');
+    }
+  };
+
+  const handleDeleteCliente = async (id) => {
+    try {
+      await axios.delete(`http://localhost:3000/admin/cliente/${id}`);
+      setClientes(clientes.filter(c => c.id !== id));
+    } catch (error) {
+      console.error(error);
+      alert('Erro ao excluir cliente');
+    }
+  };
+
   const handleEditEmpresa = async (id, dadosAtualizados) => {
     try {
       const response = await fetch(`http://localhost:3000/admin/empresas/${id}`, {
@@ -125,7 +146,13 @@ export default function DashboardAdmin() {
                 salvarEdicao={salvarEdicao}
               />
             )}
-            {activeTab === 'clientes' && <PainelClientes clientes={clientes} />}
+            {activeTab === 'clientes' && (
+              <PainelClientes
+                clientes={clientes}
+                onEdit={handleEditCliente}
+                onDelete={handleDeleteCliente}
+              />
+            )}
             {activeTab === 'empresas' && (
               <PainelEmpresas
                 empresas={empresas}

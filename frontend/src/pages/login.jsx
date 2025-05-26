@@ -43,6 +43,7 @@ export default function Login() {
           navigate('/dashboard/cliente');
           break;
         case 'empresa':
+          localStorage.setItem('empresa', JSON.stringify(user));
           navigate('/dashboard/empresa');
           break;
         case 'admin':

@@ -2,9 +2,17 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import PedidoModal from "./PedidoModal";
 import UserMenu from "./UserMenu";
+import {
+  Clock,
+  CheckCircle,
+  Truck,
+  CheckSquare,
+  XCircle
+} from "lucide-react";
 
 const DashboardEmpresa = () => {
   const [empresa, setEmpresa] = useState(null);
+  const [activeTab, setActiveTab] = useState("novo"); // "novo" ou "historico"
   const [pedidos, setPedidos] = useState({
     pendente: [],
     aceito: [],
@@ -19,21 +27,19 @@ const DashboardEmpresa = () => {
 
   useEffect(() => {
     const storedEmpresa = JSON.parse(localStorage.getItem("empresa"));
-    if (storedEmpresa) {
-      setEmpresa(storedEmpresa);
-    }
+    if (storedEmpresa) setEmpresa(storedEmpresa);
   }, []);
 
   useEffect(() => {
-    if (empresa) {
-      fetchPedidos();
-    }
+    if (empresa) fetchPedidos();
   }, [empresa]);
 
   const fetchPedidos = async () => {
     setLoading(true);
     try {
-      const res = await axios.get(`http://localhost:3000/discard-requests/empresa/${empresa.id}/todos`);
+      const res = await axios.get(
+        `http://localhost:3000/discard-requests/empresa/${empresa.id}/todos`
+      );
       const grouped = {
         pendente: [],
         aceito: [],
@@ -70,19 +76,42 @@ const DashboardEmpresa = () => {
     }
   };
 
-  const statusLabels = {
-    pendente: "Em aberto",
-    aceito: "Aceitos",
-    entrega: "Em andamento",
-    concluido: "Concluído",
-    recusado: "Recusados"
+  const statusData = {
+    pendente: { label: "Em aberto", icon: <Clock className="w-5 h-5" />, color: "text-blue-600" },
+    aceito: { label: "Aceitos", icon: <CheckCircle className="w-5 h-5" />, color: "text-indigo-600" },
+    entrega: { label: "Em andamento", icon: <Truck className="w-5 h-5" />, color: "text-orange-600" },
+    concluido: { label: "Concluído", icon: <CheckSquare className="w-5 h-5" />, color: "text-green-600" },
+    recusado: { label: "Recusados", icon: <XCircle className="w-5 h-5" />, color: "text-red-600" }
   };
 
+  const columnsToShow = activeTab === "novo"
+    ? ["pendente", "aceito", "entrega"]
+    : ["concluido", "recusado"];
+
   return (
-    <div className="p-6">
+    <div className="p-4 md:p-6">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-bold mb-6">Painel de Pedidos</h2>
+        <h2 className="text-2xl font-bold">Painel de Pedidos</h2>
         <UserMenu />
+      </div>
+
+      <div className="flex gap-2 mb-6">
+        <button
+          onClick={() => setActiveTab("novo")}
+          className={`px-4 py-2 rounded-full ${activeTab === "novo"
+            ? "bg-blue-600 text-white"
+            : "bg-gray-200 text-gray-800 hover:bg-gray-300"}`}
+        >
+          Novo Pedido
+        </button>
+        <button
+          onClick={() => setActiveTab("historico")}
+          className={`px-4 py-2 rounded-full ${activeTab === "historico"
+            ? "bg-blue-600 text-white"
+            : "bg-gray-200 text-gray-800 hover:bg-gray-300"}`}
+        >
+          Histórico
+        </button>
       </div>
 
       {toast && (
@@ -94,12 +123,21 @@ const DashboardEmpresa = () => {
       {loading ? (
         <p>Carregando pedidos...</p>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-          {Object.entries(statusLabels).map(([status, titulo]) => (
-            <div key={status} className="bg-gray-50 rounded-lg p-4 shadow-sm border">
-              <h3 className="text-lg font-semibold mb-3">{titulo}</h3>
+        <div className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-${columnsToShow.length} gap-4`}>
+          {columnsToShow.map(status => (
+            <div key={status} className="bg-gray-50 rounded-lg p-4 shadow border">
+              <div className="flex justify-center items-center gap-2 mb-4">
+                {statusData[status].icon}
+                <h3 className={`text-lg font-semibold ${statusData[status].color}`}>
+                  {statusData[status].label}
+                </h3>
+                <span className="ml-2 text-sm text-white bg-gray-700 px-2 py-0.5 rounded-full">
+                  {pedidos[status].length}
+                </span>
+              </div>
+
               {pedidos[status].length === 0 ? (
-                <p className="text-sm text-gray-400">Nenhum pedido</p>
+                <p className="text-sm text-gray-400 text-center">Nenhum pedido</p>
               ) : (
                 pedidos[status].map((p) => (
                   <div
@@ -110,7 +148,7 @@ const DashboardEmpresa = () => {
                     <p className="font-semibold">Pedido #{p.id}</p>
                     <p>{p.user?.name}</p>
                     <p className="text-sm text-gray-500">
-                      {p.user?.street}, {p.user?.number} - {p.user?.neighborhood}, {p.user?.city} - {p.user?.state}, {p.user?.cep}
+                      {p.user?.street}, {p.user?.number} - {p.user?.neighborhood}, {p.user?.city}
                     </p>
 
                     {status === "pendente" && (
@@ -145,9 +183,9 @@ const DashboardEmpresa = () => {
                           e.stopPropagation();
                           atualizarStatus(p.id, "entrega");
                         }}
-                        className="mt-2 bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded w-full"
+                        className="mt-2 bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1 rounded w-full"
                       >
-                        Colocar em entrega
+                        Retirar pedido
                       </button>
                     )}
 

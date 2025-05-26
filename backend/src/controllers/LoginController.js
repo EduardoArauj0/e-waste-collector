@@ -38,7 +38,7 @@ module.exports = {
       return res.json({
         message: 'Login realizado com sucesso',
         token,
-        user: { id: userData.id, email: userData.email, role: userData.role },
+        user: { id: userData.id, name: userData.name, email: userData.email, role: userData.role },
       });
     } catch (error) {
       return res.status(500).json({ message: 'Erro ao fazer login' });

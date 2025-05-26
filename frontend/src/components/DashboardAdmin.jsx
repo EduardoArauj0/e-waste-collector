@@ -5,6 +5,20 @@ import PainelPedidos from './PainelPedidos';
 import PainelClientes from './PainelClientes';
 import PainelEmpresas from './PainelEmpresas';
 
+function TabButton({ active, onClick, icon, label }) {
+  return (
+    <button
+      onClick={onClick}
+      className={`flex items-center gap-2 px-3 py-2 rounded-md w-full text-left
+        transition-colors duration-200
+        ${active ? 'bg-green-500 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white'}`}
+    >
+      {icon}
+      <span className="font-medium">{label}</span>
+    </button>
+  );
+}
+
 export default function DashboardAdmin() {
   const [clientes, setClientes] = useState([]);
   const [empresas, setEmpresas] = useState([]);
@@ -52,7 +66,7 @@ export default function DashboardAdmin() {
     }
   };
 
-    const handleEditCliente = async (id, dadosAtualizados) => {
+  const handleEditCliente = async (id, dadosAtualizados) => {
     try {
       const response = await axios.put(`http://localhost:3000/admin/cliente/${id}`, dadosAtualizados);
       const clienteAtualizado = response.data;
@@ -112,28 +126,44 @@ export default function DashboardAdmin() {
   }, []);
 
   return (
-    <div className="flex h-screen">
-      <aside className="w-48 bg-gray-800 text-white p-4">
-        <h2 className="text-lg font-bold mb-4">Admin</h2>
-        <nav className="space-y-2">
-          <button onClick={() => setActiveTab('pedidos')} className="block w-full text-left hover:text-green-400">Pedidos</button>
-          <button onClick={() => setActiveTab('clientes')} className="block w-full text-left hover:text-green-400">Clientes</button>
-          <button onClick={() => setActiveTab('empresas')} className="block w-full text-left hover:text-green-400">Empresas</button>
+    <div className="flex flex-col md:flex-row h-screen bg-gray-50">
+      {/* Sidebar */}
+      <aside className="w-full md:w-56 bg-gray-900 text-gray-200 flex flex-col p-5 shadow-lg">
+        <h2 className="text-2xl font-bold mb-8 text-white select-none">Admin</h2>
+
+        <nav className="flex flex-col gap-3 flex-1">
+          <TabButton
+            active={activeTab === 'pedidos'}
+            onClick={() => setActiveTab('pedidos')}
+            label="Pedidos"
+            icon={<svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 17v-6a2 2 0 012-2h6" /><path strokeLinecap="round" strokeLinejoin="round" d="M13 7h6m-6 0v6a2 2 0 01-2 2H7" /></svg>}
+          />
+          <TabButton
+            active={activeTab === 'clientes'}
+            onClick={() => setActiveTab('clientes')}
+            label="Clientes"
+            icon={<svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a4 4 0 00-3-3.87" /><path strokeLinecap="round" strokeLinejoin="round" d="M9 12a4 4 0 10-8 0 4 4 0 008 0z" /><path strokeLinecap="round" strokeLinejoin="round" d="M17 8a4 4 0 110 8 4 4 0 010-8z" /></svg>}
+          />
+          <TabButton
+            active={activeTab === 'empresas'}
+            onClick={() => setActiveTab('empresas')}
+            label="Empresas"
+            icon={<svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M3 7v4a1 1 0 001 1h3v5h2v-5h3v5h2v-5h3a1 1 0 001-1V7m-8 10v-4m0 0v-4m0 4h-4m4 0h4" /></svg>}
+          />
         </nav>
+
+        <div className="mt-6">
+          <LogoutButton className="w-full bg-red-600 hover:bg-red-700 transition-colors rounded-md py-2 text-white font-semibold" />
+        </div>
       </aside>
 
-      <main className="flex-1 p-6 overflow-y-auto">
-        <div className="flex items-center mb-6">
-          <h2 className="text-xl font-bold text-gray-800">Admin</h2>         
-          <div className="ml-auto">
-            <LogoutButton />
-          </div>
-        </div>
+      {/* Conteúdo principal */}
+      <main className="flex-1 p-6 overflow-auto">
 
         {loading ? (
-          <p className="text-center text-gray-500">Carregando...</p>
+          <p className="text-center text-gray-500 text-lg">Carregando...</p>
         ) : (
-          <div>
+          <>
             {activeTab === 'pedidos' && (
               <PainelPedidos
                 pedidos={pedidos}
@@ -162,7 +192,7 @@ export default function DashboardAdmin() {
                 onDelete={handleDeleteEmpresa}
               />
             )}
-          </div>
+          </>
         )}
       </main>
     </div>

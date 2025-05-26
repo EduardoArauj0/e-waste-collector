@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Pencil, Trash, Save, X, FileDown, ChevronLeft, ChevronRight } from 'lucide-react';
 
 export default function PainelClientes({ clientes, onEdit, onDelete }) {
   const [editingId, setEditingId] = useState(null);
@@ -32,7 +33,6 @@ export default function PainelClientes({ clientes, onEdit, onDelete }) {
   const handleCepChange = (e) => {
     const cep = e.target.value.replace(/\D/g, '');
     setEditData(prev => ({ ...prev, cep }));
-
     if (cep.length === 8) {
       consultarViaCep(cep);
     } else {
@@ -108,63 +108,69 @@ export default function PainelClientes({ clientes, onEdit, onDelete }) {
   };
 
   return (
-    <div>
-      <h2 className="text-2xl font-bold mb-4">Clientes</h2>
-
-      <div className="mb-4 flex gap-4 flex-wrap items-center">
-        <input
-          type="text"
-          placeholder="Buscar por nome"
-          value={filtroBusca}
-          onChange={e => setFiltroBusca(e.target.value)}
-          className="border p-2 rounded flex-1 min-w-[200px]"
-        />
-        <button
-          onClick={exportarCSV}
-          className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
-        >
-          Exportar CSV
-        </button>
+    <div className="p-6">
+      <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
+        <h2 className="text-2xl font-bold">Clientes</h2>
+        <div className="flex gap-2 flex-wrap">
+          <input
+            type="text"
+            placeholder="Buscar por nome"
+            value={filtroBusca}
+            onChange={e => setFiltroBusca(e.target.value)}
+            className="border rounded px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <button
+            onClick={exportarCSV}
+            className="flex items-center gap-1 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+          >
+            <FileDown className="w-4 h-4" />
+            Exportar CSV
+          </button>
+        </div>
       </div>
 
-      <div className="overflow-auto rounded shadow border">
-        <table className="w-full text-left border-collapse">
+      <div className="overflow-auto rounded-lg border shadow-sm">
+        <table className="min-w-full text-sm">
           <thead className="bg-gray-100 text-gray-700">
             <tr>
               {['Nome', 'Email', 'CEP', 'Rua', 'Número', 'Bairro', 'Cidade', 'Estado', 'Ações'].map(col => (
-                <th key={col} onClick={col !== 'Ações' ? () => ordenarPor(col.toLowerCase()) : null} className={`p-2 ${col !== 'Ações' ? 'cursor-pointer hover:underline' : ''}`}>
+                <th
+                  key={col}
+                  onClick={col !== 'Ações' ? () => ordenarPor(col.toLowerCase()) : null}
+                  className={`px-4 py-2 text-left ${col !== 'Ações' ? 'cursor-pointer hover:underline' : ''}`}
+                >
                   {col}
                 </th>
               ))}
             </tr>
           </thead>
-          <tbody>
+          <tbody className="divide-y divide-gray-200">
             {clientesPaginados.map(cliente => (
-              <tr key={cliente.id} className="border-t hover:bg-gray-50">
+              <tr key={cliente.id} className="hover:bg-gray-50">
                 {['name', 'email', 'cep', 'street', 'number', 'neighborhood', 'city', 'state'].map(campo => (
-                  <td key={campo} className="p-2">
+                  <td key={campo} className="px-4 py-2">
                     {editingId === cliente.id ? (
-                      campo === 'cep' ? (
-                        <input
-                          type="text"
-                          value={editData.cep || ''}
-                          onChange={handleCepChange}
-                          maxLength={8}
-                          className="border rounded p-1 w-full"
-                        />
-                      ) : ['name', 'email', 'number'].includes(campo) ? (
+                      ['name', 'email', 'number'].includes(campo) ? (
                         <input
                           type="text"
                           value={editData[campo] || ''}
                           onChange={e => setEditData({ ...editData, [campo]: e.target.value })}
-                          className="border rounded p-1 w-full"
+                          className="border rounded px-2 py-1 w-full"
+                        />
+                      ) : campo === 'cep' ? (
+                        <input
+                          type="text"
+                          maxLength={8}
+                          value={editData.cep || ''}
+                          onChange={handleCepChange}
+                          className="border rounded px-2 py-1 w-full"
                         />
                       ) : (
                         <input
                           type="text"
                           value={editData[campo] || ''}
                           readOnly
-                          className="border rounded p-1 w-full bg-gray-100 cursor-not-allowed"
+                          className="bg-gray-100 border rounded px-2 py-1 w-full cursor-not-allowed"
                         />
                       )
                     ) : (
@@ -172,20 +178,22 @@ export default function PainelClientes({ clientes, onEdit, onDelete }) {
                     )}
                   </td>
                 ))}
-                <td className="p-2 space-x-2">
+                <td className="px-4 py-2 flex gap-2">
                   {editingId === cliente.id ? (
                     <>
                       <button
                         onClick={salvarEdicao}
-                        className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700"
+                        className="bg-green-600 text-white px-2 py-1 rounded hover:bg-green-700"
+                        title="Salvar"
                       >
-                        Salvar
+                        <Save size={16} />
                       </button>
                       <button
                         onClick={cancelarEdicao}
-                        className="bg-gray-400 text-white px-3 py-1 rounded hover:bg-gray-500"
+                        className="bg-gray-400 text-white px-2 py-1 rounded hover:bg-gray-500"
+                        title="Cancelar"
                       >
-                        Cancelar
+                        <X size={16} />
                       </button>
                     </>
                   ) : (
@@ -204,9 +212,10 @@ export default function PainelClientes({ clientes, onEdit, onDelete }) {
                             state: cliente.state || '',
                           });
                         }}
-                        className="text-blue-600 underline"
+                        className="text-blue-600 hover:underline"
+                        title="Editar"
                       >
-                        Editar
+                        <Pencil size={16} />
                       </button>
                       <button
                         onClick={() => {
@@ -214,9 +223,10 @@ export default function PainelClientes({ clientes, onEdit, onDelete }) {
                             onDelete(cliente.id);
                           }
                         }}
-                        className="text-red-600 underline"
+                        className="text-red-600 hover:underline"
+                        title="Excluir"
                       >
-                        Excluir
+                        <Trash size={16} />
                       </button>
                     </>
                   )}
@@ -225,7 +235,7 @@ export default function PainelClientes({ clientes, onEdit, onDelete }) {
             ))}
             {clientesPaginados.length === 0 && (
               <tr>
-                <td colSpan="9" className="p-4 text-center text-gray-500">
+                <td colSpan="9" className="text-center text-gray-500 py-4">
                   Nenhum cliente encontrado.
                 </td>
               </tr>
@@ -235,23 +245,25 @@ export default function PainelClientes({ clientes, onEdit, onDelete }) {
       </div>
 
       <div className="flex justify-between items-center mt-4">
-        <span className="text-sm text-gray-700">
+        <span className="text-sm text-gray-600">
           Página {paginaAtual} de {totalPaginas}
         </span>
-        <div className="space-x-2">
+        <div className="flex items-center gap-2">
           <button
             onClick={() => mudarPagina(paginaAtual - 1)}
-            className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300"
             disabled={paginaAtual === 1}
+            className="p-2 rounded bg-gray-200 hover:bg-gray-300 disabled:opacity-50"
+            title="Página anterior"
           >
-            Anterior
+            <ChevronLeft size={16} />
           </button>
           <button
             onClick={() => mudarPagina(paginaAtual + 1)}
-            className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300"
             disabled={paginaAtual === totalPaginas}
+            className="p-2 rounded bg-gray-200 hover:bg-gray-300 disabled:opacity-50"
+            title="Próxima página"
           >
-            Próxima
+            <ChevronRight size={16} />
           </button>
         </div>
       </div>

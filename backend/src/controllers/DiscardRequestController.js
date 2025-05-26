@@ -142,5 +142,34 @@ module.exports = {
     } catch (err) {
       return res.status(500).json({ error: 'Erro ao buscar pedidos aceitos pela empresa' });
     }
+  },
+
+  async findAllByEmpresa(req, res) {
+  try {
+    const { id } = req.params;
+
+    const pedidos = await DiscardRequest.findAll({
+      where: { companyId: id },
+      include: [
+        {
+          model: User,
+          as: 'user',
+          attributes: [
+            'name',
+            'street',
+            'number',
+            'neighborhood',
+            'city',
+            'state',
+            'cep'
+          ]
+        }
+      ]
+    });
+
+    return res.json(pedidos);
+    } catch (err) {
+    return res.status(500).json({ error: 'Erro ao buscar pedidos da empresa' });
+    }
   }
 };

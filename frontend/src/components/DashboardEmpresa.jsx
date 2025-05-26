@@ -12,7 +12,7 @@ import {
 
 const DashboardEmpresa = () => {
   const [empresa, setEmpresa] = useState(null);
-  const [activeTab, setActiveTab] = useState("novo"); // "novo" ou "historico"
+  const [activeTab, setActiveTab] = useState("novo");
   const [pedidos, setPedidos] = useState({
     pendente: [],
     aceito: [],
@@ -123,7 +123,7 @@ const DashboardEmpresa = () => {
       {loading ? (
         <p>Carregando pedidos...</p>
       ) : (
-        <div className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-${columnsToShow.length} gap-4`}>
+        <div className={`grid grid-cols-1 sm:grid-cols-2 ${activeTab === "novo" ? "md:grid-cols-3" : "md:grid-cols-2"} gap-4`}>
           {columnsToShow.map(status => (
             <div key={status} className="bg-gray-50 rounded-lg p-4 shadow border">
               <div className="flex justify-center items-center gap-2 mb-4">

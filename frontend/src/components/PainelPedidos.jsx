@@ -141,8 +141,14 @@ export default function PainelPedidos({
           onChange={(e) => setBuscaCliente(e.target.value)}
           className="border p-2 rounded flex-1"
         />
-        <button onClick={exportarCSV} className="bg-green-600 text-white px-4 rounded hover:bg-green-700">Exportar CSV</button>
-      </div>
+          <button
+            onClick={exportarCSV}
+            className="flex items-center gap-1 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+          >
+            <FileDown className="w-4 h-4" />
+            Exportar CSV
+          </button>
+        </div>
 
       {/* Tabela */}
       <div className="overflow-auto rounded shadow border">

@@ -47,13 +47,15 @@ module.exports = {
   async update(req, res) {
     try {
       const { id } = req.params;
-      const { status, companyId } = req.body;
+      const { status, companyId, type, description } = req.body;
 
       const request = await DiscardRequest.findByPk(id);
       if (!request) return res.status(404).json({ error: 'Pedido não encontrado' });
 
-      request.status = status;
-      request.companyId = companyId;
+      if (status) request.status = status;
+      if (companyId) request.companyId = companyId;
+      if (type) request.type = type;
+      if (description) request.description = description;
 
       await request.save();
 

@@ -1,13 +1,7 @@
 import React from "react";
-import {
-  User,
-  MapPin,
-  Phone,
-  Package,
-  X,
-  CheckCircle,
-  XCircle
-} from "lucide-react";
+import { User, MapPin, Package, X, CheckCircle, XCircle } from "lucide-react";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 
 const PedidoModal = ({ pedido, onClose, onUpdateStatus }) => {
   if (!pedido) return null;
@@ -26,6 +20,36 @@ const PedidoModal = ({ pedido, onClose, onUpdateStatus }) => {
   const endereco = [street, number && `nº ${number}`, neighborhood, `${city} - ${state}`, cep && `CEP ${cep}`]
     .filter(Boolean)
     .join(", ");
+
+  const gerarPDFPedido = (pedido) => {
+    const doc = new jsPDF();
+
+    doc.setFontSize(18);
+    doc.text("Comprovante de Coleta de Pedido", 14, 22);
+
+    doc.setFontSize(12);
+    doc.text(`ID do Pedido: #${pedido.id}`, 14, 35);
+
+    const user = pedido.user || {};
+
+    autoTable(doc, {
+      startY: 40,
+      head: [["Campo", "Informação"]],
+      body: [
+        ["Cliente", user.name || "N/A"],
+        ["Endereço", `${user.street || ""}, nº ${user.number || ""}, ${user.neighborhood || ""}, ${user.city || ""} - ${user.state || ""}`],
+        ["CEP", user.cep || "N/A"],
+        ["Tipo de Item", pedido.type || "N/A"],
+        ["Descrição", pedido.description || "N/A"],
+      ],
+    });
+
+    doc.setFontSize(12);
+    doc.text("Assinatura do cliente:", 14, doc.lastAutoTable.finalY + 20);
+    doc.line(14, doc.lastAutoTable.finalY + 25, 100, doc.lastAutoTable.finalY + 25);
+
+    doc.save(`pedido_${pedido.id}.pdf`);
+  };
 
   return (
     <div className="fixed inset-0 z-50 bg-black bg-opacity-40 flex items-center justify-center px-4">
@@ -83,6 +107,17 @@ const PedidoModal = ({ pedido, onClose, onUpdateStatus }) => {
             >
               <CheckCircle className="w-4 h-4" />
               Aceitar pedido
+            </button>
+          </div>
+        )}
+
+        {pedido.status === "aceito" && (
+          <div className="flex justify-end mt-6">
+            <button
+              onClick={() => gerarPDFPedido(pedido)}
+              className="bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded shadow"
+            >
+              Gerar PDF do Pedido
             </button>
           </div>
         )}

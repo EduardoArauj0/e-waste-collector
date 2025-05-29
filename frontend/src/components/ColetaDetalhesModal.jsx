@@ -1,7 +1,7 @@
 import { Trash2, X } from "lucide-react";
 import React, { useEffect, useState, useRef } from "react";
 import { toast } from "react-toastify";
-import ConfirmModal from "./ConfirmModal"; // Ajuste o caminho conforme sua estrutura
+import ConfirmModal from "./ConfirmModal";
 
 export default function ColetaModal({
   isOpen,
@@ -177,6 +177,7 @@ export default function ColetaModal({
                 </>
               ) : (
                 <>
+                <>
                   <p>
                     <strong>Tipo:</strong> {selectedColeta.type}
                   </p>
@@ -184,6 +185,12 @@ export default function ColetaModal({
                     <strong>Descrição:</strong> {selectedColeta.description}
                   </p>
 
+                  {selectedColeta.company?.name && (
+                    <p>
+                      <strong>Empresa responsável:</strong> {selectedColeta.company.name}
+                    </p>
+                  )}
+                </>
                   <div className="flex gap-3 mt-4">
                     <button
                       onClick={() => setIsEditing(true)}

@@ -13,7 +13,6 @@ import {
 } from "lucide-react";
 
 export default function DashboardCliente() {
-  // Carrega user uma única vez, mantendo referência estável
   const [user] = useState(() => {
     const storedUser = localStorage.getItem("user");
     return storedUser ? JSON.parse(storedUser) : null;
@@ -40,7 +39,9 @@ export default function DashboardCliente() {
       const res = await axios.get(
         `http://localhost:3000/discard-requests/cliente/${user.id}`
       );
-      setColetas(res.data);
+      setColetas(Array.isArray(res.data) ? res.data : []);
+      console.log("Resposta do backend:", res.data);
+
     } catch (error) {
       console.error("Erro ao buscar coletas:", error);
     } finally {
@@ -48,7 +49,7 @@ export default function DashboardCliente() {
     }
   };
 
-    const updateColeta = async (id, data) => {
+  const updateColeta = async (id, data) => {
     try {
       await axios.put(`http://localhost:3000/discard-requests/${id}`, data);
       setResponse({ type: "success", message: "Coleta atualizada com sucesso!" });
@@ -70,7 +71,6 @@ export default function DashboardCliente() {
     }
   };
 
-  // O useEffect agora depende apenas do user.id, valor primitivo estável
   useEffect(() => {
     if (user?.id) {
       fetchColetas();

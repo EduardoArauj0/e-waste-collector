@@ -1,7 +1,8 @@
 import React from "react";
-import { User, MapPin, Package, X, CheckCircle, XCircle } from "lucide-react";
+import { User, MapPin, Package, X, CheckCircle, XCircle, FileTexts } from "lucide-react";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import QRCode from "qrcode";
 
 const PedidoModal = ({ pedido, onClose, onUpdateStatus }) => {
   if (!pedido) return null;
@@ -21,8 +22,9 @@ const PedidoModal = ({ pedido, onClose, onUpdateStatus }) => {
     .filter(Boolean)
     .join(", ");
 
-  const gerarPDFPedido = (pedido) => {
+  const gerarPDFPedido = async (pedido) => {
     const doc = new jsPDF();
+    const user = pedido.user || {};
 
     doc.setFontSize(18);
     doc.text("Comprovante de Coleta de Pedido", 14, 22);
@@ -30,13 +32,12 @@ const PedidoModal = ({ pedido, onClose, onUpdateStatus }) => {
     doc.setFontSize(12);
     doc.text(`ID do Pedido: #${pedido.id}`, 14, 35);
 
-    const user = pedido.user || {};
-
     autoTable(doc, {
       startY: 40,
       head: [["Campo", "Informação"]],
       body: [
         ["Cliente", user.name || "N/A"],
+        ["Telefone", user.phone || "N/A"],
         ["Endereço", `${user.street || ""}, nº ${user.number || ""}, ${user.neighborhood || ""}, ${user.city || ""} - ${user.state || ""}`],
         ["CEP", user.cep || "N/A"],
         ["Tipo de Item", pedido.type || "N/A"],
@@ -44,10 +45,26 @@ const PedidoModal = ({ pedido, onClose, onUpdateStatus }) => {
       ],
     });
 
-    doc.setFontSize(12);
-    doc.text("Assinatura do cliente:", 14, doc.lastAutoTable.finalY + 20);
-    doc.line(14, doc.lastAutoTable.finalY + 25, 100, doc.lastAutoTable.finalY + 25);
+    // Gera o QR code em base64 (pode ser o ID do pedido ou um link)
+    const qrData = `Pedido #${pedido.id}`;
+    const qrCodeDataUrl = await QRCode.toDataURL(qrData);
 
+    // Inserir QR Code no canto inferior direito
+    const qrSize = 40;
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
+    doc.addImage(qrCodeDataUrl, "PNG", pageWidth - qrSize - 14, pageHeight - qrSize - 20, qrSize, qrSize);
+
+    // Linha de assinatura centralizada
+    const assinaturaY = doc.lastAutoTable.finalY + 30;
+    const assinaturaWidth = 80;
+    const assinaturaX = (pageWidth - assinaturaWidth) / 2;
+
+    doc.setFontSize(12);
+    doc.line(assinaturaX, assinaturaY, assinaturaX + assinaturaWidth, assinaturaY);
+    doc.text("Assinatura do cliente", assinaturaX + 20, assinaturaY + 5);
+
+    // Salvar
     doc.save(`pedido_${pedido.id}.pdf`);
   };
 
@@ -114,7 +131,7 @@ const PedidoModal = ({ pedido, onClose, onUpdateStatus }) => {
         {pedido.status === "aceito" && (
           <div className="flex justify-end mt-6">
             <button
-              onClick={() => gerarPDFPedido(pedido)}
+              onClick={async () => await gerarPDFPedido(pedido)}
               className="bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded shadow"
             >
               Gerar PDF do Pedido

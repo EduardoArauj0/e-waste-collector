@@ -47,9 +47,25 @@ const DashboardEmpresa = () => {
         concluido: [],
         recusado: []
       };
+
+      // Agrupa os pedidos por status
       res.data.forEach(p => {
         if (grouped[p.status]) grouped[p.status].push(p);
       });
+
+      // Busca os pedidos pendentes disponíveis e evita sobrescrever os existentes
+      const resPendentes = await axios.get("http://localhost:3000/discard-requests/pendentes/disponiveis");
+
+      if (Array.isArray(resPendentes.data)) {
+        // Adiciona apenas os pedidos que ainda não estão no grupo
+        resPendentes.data.forEach(pendente => {
+          if (!grouped.pendente.find(p => p.id === pendente.id)) {
+            grouped.pendente.push(pendente);
+          }
+        });
+      }
+
+      console.log("Pedidos agrupados:", grouped);
       setPedidos(grouped);
     } catch (err) {
       console.error("Erro ao buscar pedidos:", err);

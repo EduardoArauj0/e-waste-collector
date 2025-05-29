@@ -2,13 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import PedidoModal from "./PedidoModal";
 import UserMenu from "./UserMenu";
-import {
-  Clock,
-  CheckCircle,
-  Truck,
-  CheckSquare,
-  XCircle
-} from "lucide-react";
+import { Clock, CheckCircle, Truck, CheckSquare, XCircle } from "lucide-react";
 
 const DashboardEmpresa = () => {
   const [empresa, setEmpresa] = useState(null);
@@ -230,6 +224,7 @@ const DashboardEmpresa = () => {
           pedido={pedidoSelecionado}
           onClose={() => setPedidoSelecionado(null)}
           onUpdateStatus={atualizarStatus}
+          empresa={empresa}
         />
       )}
     </div>

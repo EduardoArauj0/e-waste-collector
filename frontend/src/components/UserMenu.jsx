@@ -9,7 +9,7 @@ const UserMenu = () => {
   const navigate = useNavigate();
 
   const toggleMenu = () => {
-    setIsOpen(!isOpen);
+    setIsOpen((prev) => !prev);
   };
 
   useEffect(() => {
@@ -23,25 +23,30 @@ const UserMenu = () => {
   return (
     <div className="relative inline-block text-left">
       <img
-        src={userIcon} 
+        src={userIcon}
         alt="Perfil"
-        className="w-8 h-8 cursor-pointer rounded-full"
+        className="w-9 h-9 rounded-full cursor-pointer transition hover:ring-2 hover:ring-blue-400"
         onClick={toggleMenu}
       />
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-48 bg-white border rounded shadow-md z-50">
-          <div className="px-4 py-2 text-gray-800 border-b">
-            <p className="text-sm font-semibold">Usuário</p>
+        <div className="absolute right-0 mt-2 w-56 bg-white rounded-2xl shadow-lg ring-1 ring-black/5 z-50 animate-fade-in">
+          <div className="px-4 py-3 border-b">
+            <p className="text-sm font-semibold text-gray-800">Usuário</p>
             <p className="text-xs text-gray-500 truncate">{user?.email}</p>
           </div>
           <button
-            onClick={() => navigate('/editar-perfil')}
-            className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+            onClick={() => {
+              navigate('/editar-perfil');
+              setIsOpen(false);
+            }}
+            className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 transition"
           >
-            Editar Perfil
+          Editar Perfil
           </button>
-          <LogoutButton />
+          <div className="border-t">
+            <LogoutButton />
+          </div>
         </div>
       )}
     </div>

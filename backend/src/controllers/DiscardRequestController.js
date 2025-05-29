@@ -82,7 +82,7 @@ module.exports = {
   async findByClienteId(req, res) {
     try {
       const { id } = req.params;
-  
+
       const pedidos = await DiscardRequest.findAll({
         where: { userId: id },
         include: [
@@ -93,12 +93,9 @@ module.exports = {
           }
         ]
       });
-  
-      if (pedidos.length === 0) {
-        return res.status(200).json({ message: 'Nenhum pedido encontrado.' });
-      }
-  
-      res.json(pedidos);
+
+      // Sempre retorna array, mesmo se vazio
+      return res.status(200).json(pedidos);
     } catch (error) {
       res.status(500).json({ error: 'Erro ao buscar pedidos do cliente' });
     }
@@ -173,5 +170,27 @@ module.exports = {
     } catch (err) {
     return res.status(500).json({ error: 'Erro ao buscar pedidos da empresa' });
     }
+  },
+
+  async findPendentesParaEmpresas(req, res) {
+  try {
+    const pedidos = await DiscardRequest.findAll({
+      where: {
+        status: 'pendente',
+        companyId: null
+      },
+      include: [
+        {
+          model: User,
+          as: 'user',
+          attributes: ['name', 'street', 'number', 'neighborhood', 'city']
+        }
+      ]
+    });
+
+    return res.json(pedidos);
+  } catch (err) {
+    return res.status(500).json({ error: 'Erro ao buscar pedidos pendentes' });
   }
+}
 };

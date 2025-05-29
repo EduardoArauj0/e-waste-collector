@@ -24,69 +24,90 @@ const PedidoModal = ({ pedido, onClose, onUpdateStatus, empresa }) => {
   const gerarPDFPedido = async (pedido, empresa) => {
     const jsPDF = (await import("jspdf")).default;
     const QRCode = (await import("qrcode")).default;
-    const doc = new jsPDF();
+    const doc = new jsPDF("p", "mm", "a4");
 
     const pageWidth = doc.internal.pageSize.getWidth();
     const user = pedido.user || {};
 
+    // Cores
+    const corPrimaria = [66, 133, 244];
+    const cinzaClaro = [245, 245, 245];
+
     // TÍTULO
-    doc.setFontSize(16);
-    doc.text("ORDEM DE COLETA DE PEDIDO", 14, 20);
-    doc.setFontSize(12);
-    doc.text(`Nº ${pedido.id}`, pageWidth - 40, 20);
+    doc.setFillColor(...corPrimaria);
+    doc.setTextColor(255);
+    doc.roundedRect(14, 14, pageWidth - 28, 12, 3, 3, "F");
+    doc.setFontSize(14);
+    doc.text("ORDEM DE COLETA DE PEDIDO", pageWidth / 2, 22, { align: "center" });
 
-    // CAIXAS DE DADOS
-    doc.setLineWidth(0.1);
-    doc.rect(14, 26, 90, 30); // cliente
-    doc.rect(109, 26, 90, 30); // empresa
-
-    doc.setFontSize(10);
-    // CLIENTE
-    doc.text("DADOS DO CLIENTE:", 16, 31);
-    doc.text(`Nome: ${user.name || "N/A"}`, 16, 36);
-    doc.text(`Endereço: ${user.street || ""}, Nº ${user.number || ""}`, 16, 41);
-    doc.text(`Bairro: ${user.neighborhood || ""}`, 16, 46);
-    doc.text(`Cidade: ${user.city || ""} - ${user.state || ""}`, 16, 51);
-
-    // EMPRESA
-    doc.text("DADOS DA EMPRESA:", 111, 31);
-    doc.text(`Nome: ${empresa?.name || "Empresa"}`, 111, 36);
-
-    const enderecoEmpresa = `${empresa?.street}, Nº ${empresa?.number}, ${empresa?.neighborhood}, ${empresa?.city} - ${empresa?.state}`;
-    const enderecoFormatado = doc.splitTextToSize(enderecoEmpresa, 85);
-
-    doc.text("Endereço:", 111, 41);
-    doc.text(enderecoFormatado, 111, 46);
-
-    // DESCRIÇÃO DA CARGA
-    const startY = 62;
-    doc.setFontSize(11);
-    doc.text("DESCRIÇÃO DA CARGA A SER COLETADA", 14, startY);
-
-    doc.setDrawColor(0);
-    doc.setFillColor(240);
-    doc.rect(14, startY + 4, 185, 10, "F");
-
+    // NÚMERO DO PEDIDO
     doc.setTextColor(0);
     doc.setFontSize(10);
+    doc.text(`Pedido Nº ${pedido.id}`, pageWidth - 40, 30);
+
+    // CLIENTE E EMPRESA
+    doc.setFontSize(10);
+    doc.setDrawColor(200);
+    doc.roundedRect(14, 34, 90, 35, 2, 2); // cliente
+    doc.roundedRect(109, 34, 90, 35, 2, 2); // empresa
+
+    // CLIENTE
+    doc.setFont(undefined, "bold");
+    doc.text("DADOS DO CLIENTE", 16, 39);
+    doc.setFont(undefined, "normal");
+    doc.text(`Nome: ${user.name || "N/A"}`, 16, 44);
+    doc.text(`Endereço: ${user.street || ""}, Nº ${user.number || ""}`, 16, 49);
+    doc.text(`Bairro: ${user.neighborhood || ""}`, 16, 54);
+    doc.text(`Cidade: ${user.city || ""} - ${user.state || ""}`, 16, 59);
+    doc.text(`CEP: ${user.cep || ""}`, 16, 64);
+
+    // EMPRESA
+    doc.setFont(undefined, "bold");
+    doc.text("DADOS DA EMPRESA", 111, 39);
+    doc.setFont(undefined, "normal");
+    doc.text(`Nome: ${empresa?.name || "Empresa"}`, 111, 44);
+    doc.text(`Endereço: ${empresa?.street || ""}, Nº ${empresa?.number || ""}`, 111, 49);
+    doc.text(`Bairro: ${empresa?.neighborhood || ""}`, 111, 54);
+    doc.text(`Cidade: ${empresa?.city || ""} - ${empresa?.state || ""}`, 111, 59);
+    doc.text(`CEP: ${empresa?.cep || ""}`, 111, 64);
+
+    // SEPARADOR
+    doc.setDrawColor(180);
+    doc.setLineDashPattern([1, 1], 0);
+    doc.line(14, 72, pageWidth - 14, 72);
+    doc.setLineDashPattern([], 0);
+
+    // DESCRIÇÃO DA CARGA
+    const startY = 78;
+    doc.setFontSize(11);
+    doc.setFont(undefined, "bold");
+    doc.text("DESCRIÇÃO DA CARGA", 14, startY);
+    doc.setFont(undefined, "normal");
+
+    // TABELA COM FUNDO
+    doc.setFillColor(...cinzaClaro);
+    doc.rect(14, startY + 4, 185, 10, "F");
     doc.text("TIPO DO ITEM", 16, startY + 11);
     doc.text("DESCRIÇÃO", 100, startY + 11);
 
-    doc.rect(14, startY + 14, 185, 10);
+    doc.rect(14, startY + 14, 185, 12);
     doc.text(pedido.type || "N/A", 16, startY + 21);
-    doc.text(pedido.description || "Sem descrição", 100, startY + 21);
+    const descricao = doc.splitTextToSize(pedido.description || "Sem descrição", 85);
+    doc.text(descricao, 100, startY + 21);
 
-    // RODAPÉ COM DATA E ASSINATURA
+    // RODAPÉ
     const rodapeY = startY + 40;
     doc.setFontSize(10);
     doc.text("DATA: ____ / ____ / _______", 14, rodapeY);
-    doc.text("ASSINATURA DO CLIENTE: ____________________________", 90, rodapeY);
+    doc.text("ASSINATURA DO CLIENTE:", 84, rodapeY);
+    doc.line(130, rodapeY, 195, rodapeY);
 
-    // QR Code
+    // QR CODE
     const qrData = `Pedido #${pedido.id}`;
     const qrCodeDataUrl = await QRCode.toDataURL(qrData);
-    doc.addImage(qrCodeDataUrl, "PNG", pageWidth - 40, rodapeY + 5, 25, 25);
+    doc.addImage(qrCodeDataUrl, "PNG", pageWidth - 35, rodapeY + 5, 20, 20);
 
+    // Salvar
     doc.save(`ordem_coleta_pedido_${pedido.id}.pdf`);
   };
 

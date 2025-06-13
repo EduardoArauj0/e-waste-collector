@@ -13,6 +13,6 @@ router.delete('/empresa/:id', AdminController.deleteEmpresa);
 
 router.get('/pedidos', AdminController.getAllPedidos); 
 router.put('/pedido/:id', AdminController.updatePedido); 
-
+router.delete('/pedido/:id', AdminController.deletePedido);
 
 module.exports = router;

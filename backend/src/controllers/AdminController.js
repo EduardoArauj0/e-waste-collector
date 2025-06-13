@@ -123,4 +123,17 @@ module.exports = {
       return res.status(500).json({ error: 'Erro ao atualizar pedido' });
     }
   },
+
+    async deletePedido(req, res) {
+    try {
+      const { id } = req.params;
+      const deleted = await DiscardRequest.destroy({ where: { id } });
+
+      if (!deleted) return res.status(404).json({ error: 'Pedido não encontrado' });
+
+      return res.json({ message: 'Pedido removido com sucesso' });
+    } catch (err) {
+      return res.status(500).json({ error: 'Erro ao excluir pedido' });
+    }
+  },
 };

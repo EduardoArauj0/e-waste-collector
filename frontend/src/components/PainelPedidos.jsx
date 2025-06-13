@@ -211,12 +211,9 @@ export default function PainelPedidos({
                       </button>
                     )}
                       <button
-                        onClick={() => {
-                          if (window.confirm('Tem certeza que deseja excluir esta empresa?')) {
-                            onDelete(empresa.id);
-                          }
-                        }}
+                        onClick={() => onDelete(pedido.id)}
                         className="text-red-600 hover:underline"
+                        title="Excluir Pedido"
                       >
                         <Trash size={16} />
                       </button>

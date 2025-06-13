@@ -75,7 +75,7 @@ export default function Register() {
       setResponse({ type: 'success', message: 'Usuário cadastrado com sucesso! Redirecionando...' });
 
       setTimeout(() => {
-        navigate('/login');
+        navigate('/');
       }, 2000);
     } catch (err) {
       console.error('Erro no cadastro:', err);

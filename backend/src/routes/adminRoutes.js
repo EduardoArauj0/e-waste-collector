@@ -8,8 +8,8 @@ router.get('/empresas', AdminController.getAllEmpresas);
 
 router.put('/cliente/:id', AdminController.updateCliente);
 router.delete('/cliente/:id', AdminController.deleteCliente);
-router.put('/empresa/:id', AdminController.updateEmpresa);
-router.delete('/empresa/:id', AdminController.deleteEmpresa);
+router.put('/empresas/:id', AdminController.updateEmpresa);
+router.delete('/empresas/:id', AdminController.deleteEmpresa);
 
 router.get('/pedidos', AdminController.getAllPedidos); 
 router.put('/pedido/:id', AdminController.updatePedido); 

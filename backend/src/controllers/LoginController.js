@@ -1,28 +1,28 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const { User } = require('../models');
-
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
-const ADMIN_PASSWORD_HASH = process.env.ADMIN_PASSWORD;
+const { User, Admin } = require('../models'); 
 
 module.exports = {
   async login(req, res) {
     const { email, password } = req.body;
 
     try {
-      if (email === ADMIN_EMAIL) {
-        const isMatch = await bcrypt.compare(password, ADMIN_PASSWORD_HASH);
+      // Lógica de login do Admin 
+      const admin = await Admin.findOne({ where: { email } });
+      if (admin) {
+        const isMatch = await bcrypt.compare(password, admin.password);
         if (!isMatch) return res.status(401).json({ message: 'Senha incorreta' });
 
-        const token = jwt.sign({ email, role: 'admin' }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        const token = jwt.sign({ email: admin.email, role: 'admin' }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
         return res.json({
           message: 'Login realizado com sucesso',
           token,
-          user: { email, role: 'admin' },
+          user: { email: admin.email, role: 'admin' },
         });
       }
 
+      // Lógica de login (clientes/empresas)
       const user = await User.findOne({ where: { email } });
 
       if (!user) return res.status(401).json({ message: 'Email ou senha inválidos' });

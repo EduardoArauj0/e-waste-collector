@@ -105,7 +105,7 @@ export default function PainelPedidos({
           <p className="text-xl font-bold">{pedidos.filter(p => p.status === 'aceito').length}</p>
         </div>
         <div className="bg-orange-100 text-orange-900 p-4 rounded-xl shadow-md text-center">
-          <p className="text-sm font-medium">Em Andamento</p>
+          <p className="text-sm font-medium">Em Coleta</p>
           <p className="text-xl font-bold">{pedidos.filter(p => p.status === 'em andamento').length}</p>
         </div>
         <div className="bg-green-100 text-green-900 p-4 rounded-xl shadow-md text-center">
@@ -124,7 +124,7 @@ export default function PainelPedidos({
           <option value="">Todos os status</option>
           <option value="pendente">Pendente</option>
           <option value="aceito">Aceito</option>
-          <option value="em andamento">Em Andamento</option>
+          <option value="em andamento">Em Coleta</option>
           <option value="concluído">Concluído</option>
           <option value="recusado">Recusado</option>
         </select>
@@ -184,7 +184,7 @@ export default function PainelPedidos({
                       >
                         <option value="pendente">Pendente</option>
                         <option value="aceito">Aceito</option>
-                        <option value="em andamento">Em Andamento</option>
+                        <option value="em andamento">Em Coleta</option>
                         <option value="concluído">Concluído</option>
                         <option value="recusado">Recusado</option>
                       </select>

@@ -134,7 +134,7 @@ export default function ColetaModal({
                 <>
                   <label className="block mb-2">
                     Tipo:
-                    <input
+                    <select
                       ref={firstInputRef}
                       name="type"
                       value={editData.type}
@@ -143,7 +143,29 @@ export default function ColetaModal({
                         !editData.type.trim() ? "border-red-500" : ""
                       }`}
                       aria-invalid={!editData.type.trim()}
-                    />
+                    >
+                      <option value="">Selecione o tipo de resíduo</option>
+                      <option value="Celulares e Tablets">
+                        Celulares e Tablets
+                      </option>
+                      <option value="Computadores e Notebooks">
+                        Computadores e Notebooks
+                      </option>
+                      <option value="Monitores e TVs">Monitores e TVs</option>
+                      <option value="Periféricos (teclados, mouses, etc.)">
+                        Periféricos (teclados, mouses, etc.)
+                      </option>
+                      <option value="Baterias e Pilhas">
+                        Baterias e Pilhas
+                      </option>
+                      <option value="Cabos e Carregadores">
+                        Cabos e Carregadores
+                      </option>
+                      <option value="Eletrodomésticos Pequenos">
+                        Eletrodomésticos Pequenos
+                      </option>
+                      <option value="Outros">Outros</option>
+                    </select>
                   </label>
 
                   <label className="block mb-2">

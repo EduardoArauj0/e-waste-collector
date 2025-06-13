@@ -9,6 +9,7 @@ import {
   Loader,
   CheckCircle,
   XCircle,
+  Truck,
   Clock,
 } from "lucide-react";
 
@@ -133,8 +134,8 @@ export default function DashboardCliente() {
       color: "text-green-600",
     },
     entrega: {
-      label: "Em andamento",
-      icon: <Loader className="w-5 h-5 animate-spin" />,
+      label: "Em coleta",
+      icon: <Truck className="w-5 h-5" />,
       color: "text-orange-600",
     },
     concluido: {
@@ -188,42 +189,56 @@ export default function DashboardCliente() {
       </div>
 
       {activeTab === "novo" && (
-        <div className="bg-white p-6 rounded-xl shadow mb-8">
-          <h3 className="text-lg font-semibold mb-4 text-gray-700">
-            Novo Pedido de Coleta
-          </h3>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {residuos.map((residuo, index) => (
-              <div key={index} className="grid md:grid-cols-3 gap-2 items-center">
-                <input
-                  type="text"
-                  name="type"
-                  placeholder="Tipo de resíduo"
-                  value={residuo.type}
-                  onChange={(e) => handleChange(index, e)}
-                  className="border p-2 rounded w-full"
-                  required
-                />
-                <input
-                  type="text"
-                  name="description"
-                  placeholder="Descrição"
-                  value={residuo.description}
-                  onChange={(e) => handleChange(index, e)}
-                  className="border p-2 rounded w-full"
-                  required
-                />
-                {residuos.length > 1 && (
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveResíduo(index)}
-                    className="text-red-600 hover:text-red-800 flex items-center gap-1 text-sm"
+          <div className="bg-white p-6 rounded-xl shadow mb-8">
+            <h3 className="text-lg font-semibold mb-4 text-gray-700">
+              Novo Pedido de Coleta
+            </h3>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              {residuos.map((residuo, index) => (
+                <div key={index} className="grid md:grid-cols-3 gap-2 items-center">
+                  <select
+                    name="type"
+                    value={residuo.type}
+                    onChange={(e) => handleChange(index, e)}
+                    className="border p-2 rounded w-full"
+                    required
                   >
-                    <Trash2 className="w-4 h-4" /> Remover
-                  </button>
-                )}
-              </div>
-            ))}
+                    <option value="">Selecione o tipo de resíduo</option>
+                    <option value="Celulares e Tablets">Celulares e Tablets</option>
+                    <option value="Computadores e Notebooks">
+                      Computadores e Notebooks
+                    </option>
+                    <option value="Monitores e TVs">Monitores e TVs</option>
+                    <option value="Periféricos (teclados, mouses, etc.)">
+                      Periféricos (teclados, mouses, etc.)
+                    </option>
+                    <option value="Baterias e Pilhas">Baterias e Pilhas</option>
+                    <option value="Cabos e Carregadores">Cabos e Carregadores</option>
+                    <option value="Eletrodomésticos Pequenos">
+                      Eletrodomésticos Pequenos
+                    </option>
+                    <option value="Outros">Outros</option>
+                  </select>
+                  <input
+                    type="text"
+                    name="description"
+                    placeholder="Descrição"
+                    value={residuo.description}
+                    onChange={(e) => handleChange(index, e)}
+                    className="border p-2 rounded w-full"
+                    required
+                  />
+                  {residuos.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveResíduo(index)}
+                      className="text-red-600 hover:text-red-800 flex items-center gap-1 text-sm"
+                    >
+                      <Trash2 className="w-4 h-4" /> Remover
+                    </button>
+                  )}
+                </div>
+              ))}
             <div className="flex flex-wrap gap-3 pt-2">
               <button
                 type="button"

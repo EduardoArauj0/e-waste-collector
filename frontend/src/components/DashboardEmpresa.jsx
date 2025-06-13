@@ -89,7 +89,7 @@ const DashboardEmpresa = () => {
   const statusData = {
     pendente: { label: "Em aberto", icon: <Clock className="w-5 h-5" />, color: "text-blue-600" },
     aceito: { label: "Aceitos", icon: <CheckCircle className="w-5 h-5" />, color: "text-indigo-600" },
-    entrega: { label: "Em andamento", icon: <Truck className="w-5 h-5" />, color: "text-orange-600" },
+    entrega: { label: "Em coleta", icon: <Truck className="w-5 h-5" />, color: "text-orange-600" },
     concluido: { label: "Concluído", icon: <CheckSquare className="w-5 h-5" />, color: "text-green-600" },
     recusado: { label: "Recusados", icon: <XCircle className="w-5 h-5" />, color: "text-red-600" }
   };
